@@ -6,3 +6,8 @@
 void ADPlayerController::SetPawn(APawn* InPawn) {
 	Super::SetPawn(InPawn);
 }
+
+void ADPlayerController::BeginPlayingState()
+{
+	BlueprintBeginPlayingState();
+}

@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "TestFunctions.h"
 #include "DGameInstance.generated.h"
+
 
 
 UCLASS()
@@ -24,5 +26,7 @@ public:
 	int MaxPointsToGather;
 	UPROPERTY(EditAnywhere, Category = "LevelSettings")
 	int CurrentGatheredPoints;
-	
+
+	UPROPERTY(EditAnywhere, Category="Image Level Data")
+	FUImageLevelData ImageLevelInfo;
 };

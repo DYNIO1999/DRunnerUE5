@@ -14,4 +14,8 @@ class DRUNNER_API ADPlayerController : public APlayerController
 public:
 	virtual void SetPawn(APawn* InPawn) override;
 	
+	virtual void BeginPlayingState() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BlueprintBeginPlayingState();
 };

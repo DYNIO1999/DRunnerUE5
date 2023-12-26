@@ -26,49 +26,43 @@ void UTestFunctions::DrawTestText()
 	
 }
 
-TArray<int> UTestFunctions::ReadImage(const FString& ImageName)
+FUImageLevelData UTestFunctions::ReadImage(const FString& ImageName)
 {
-	//figure out path
 	const FString ProjectDirectory = FPaths::ProjectDir();
 	const  FString ImageDirectoryName{"LevelData"};
 
 	const FString PathToImage = ProjectDirectory+TEXT("/")+ImageDirectoryName+TEXT("/")+ImageName;
-
-
-	// Load the image wrapper module
+	
 	IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
+	
+	TSharedPtr<IImageWrapper> ImageWrap = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG);
 
-	// Create a PNG image wrapper
-	 TSharedPtr<IImageWrapper> ImageWrap = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG);
-
-	// Load the PNG file
+	int ImageWidth{};
+	int ImageHeight{};
+	
+	TArray<int> ImageDataToBeCopied;
+	
+	
 	TArray<uint8> FileData;
 	if (FFileHelper::LoadFileToArray(FileData, *PathToImage))
 	{
-		// Decompress the PNG file data
+		
+		
 		if (ImageWrap->SetCompressed(FileData.GetData(), FileData.Num()))
 		{
 			TArray64<uint8> UncompressedData;
             
-			// Decompress the image data
 			ImageWrap->GetRaw( UncompressedData);
 
-			const size_t NumberOfElements = UncompressedData.GetAllocatedSize()/UncompressedData.GetTypeSize();
-			const FString AllocatedSize  = FString::FromInt(NumberOfElements);
+			ImageWidth = ImageWrap->GetWidth();
+			ImageHeight = ImageWrap->GetHeight();
 			
-			if (GEngine)
+			for(int i =0;i<UncompressedData.Num();i++)
 			{
-				constexpr  float MessageTime = 30.0f; 
-				const FColor MessageColor = FColor::Red;
-				GEngine->AddOnScreenDebugMessage(-1, MessageTime, MessageColor, AllocatedSize);
-
-				for (size_t i =0; i< NumberOfElements ;i++)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("%d"), UncompressedData[i]);
-				}
+				ImageDataToBeCopied.Push(UncompressedData[i]);
+				
 			}
-			
 		}
 	}
-	return  TArray<int>();
+	return  FUImageLevelData(ImageDataToBeCopied, ImageWidth, ImageHeight, 4);
 }
