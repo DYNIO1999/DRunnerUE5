@@ -32,8 +32,5 @@ public:
 
 	UFUNCTION()
 	void CoinCollected();
-
-
-	
 	
 };

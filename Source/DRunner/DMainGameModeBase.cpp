@@ -23,7 +23,16 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 		MyGameInstance->ImageLevelInfo = ImageLevelData;
 		
 	}
+}
 
+void ADMainGameModeBase::StartPlay()
+{
+	Super::StartPlay();
+	
+	UGameInstance* GameInstance = GetGameInstance();
+
+	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+	
 	TArray<AActor*> FoundCoins;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
 	MaxCoinsOnLevel= FoundCoins.Num();
@@ -47,11 +56,6 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 			UE_LOG(LogTemp, Warning, TEXT("%d"), ImageRawData[i]);
 		}
 	}
-}
-
-void ADMainGameModeBase::StartPlay()
-{
-	Super::StartPlay();
 }
  
 
