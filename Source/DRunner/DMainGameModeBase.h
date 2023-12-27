@@ -15,6 +15,9 @@ class DRUNNER_API ADMainGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	//get data from game-instance
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Actor To Spawn")
+	TSubclassOf<AActor> ActorToSpawn;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Image File Name")
 	FString ImageFileName;
