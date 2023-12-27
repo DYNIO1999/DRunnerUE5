@@ -10,6 +10,7 @@
 class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
+class USphereComponent;
 
 UCLASS()
 class DRUNNER_API ADPlayer : public ACharacter
@@ -62,6 +63,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 
+	
 	void Walk(const FInputActionValue& InputValue);
 	void Look(const FInputActionValue& InputValue);
 	void StartRunning();

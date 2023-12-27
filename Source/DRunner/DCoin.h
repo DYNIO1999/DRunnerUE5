@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "DCoin.generated.h"
 
+class USphereComponent;
+class UStaticMeshComponent;
+
 UCLASS()
 class DRUNNER_API ADCoin : public AActor
 {
@@ -22,6 +25,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventTriggered);
+	
+	UPROPERTY(BlueprintAssignable, Category = "EventGathered")
+	FOnEventTriggered OnEventGathered;
 
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -30,8 +38,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
 
-
+	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
+	void SendInfoGathered() const;
 
 };

@@ -10,7 +10,7 @@ ADCoin::ADCoin()
 {
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
-	SphereComp->SetCollisionProfileName("Powerup");
+	SphereComp->SetCollisionProfileName("CoinGatheredCollisionProfile");
 	RootComponent = SphereComp;
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
@@ -38,9 +38,16 @@ void ADCoin::Tick(float DeltaTime)
 
 void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
 	if (OtherActor && OtherActor != this && OtherActor->IsA(ADPlayer::StaticClass()))
 	{
-		
+		SendInfoGathered();
+		Destroy();
 	}
+}
+
+void ADCoin::SendInfoGathered() const
+{
+	OnEventGathered.Broadcast();
 }
 
