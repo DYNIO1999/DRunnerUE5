@@ -114,6 +114,7 @@ void ADPlayer::Look(const FInputActionValue& InputValue)
 void ADPlayer::StartRunning()
 {
 	CurrentCharacterSpeed = CharacterRunningSpeed;
+	
 	ChangeSpeedValue(CurrentCharacterSpeed);
 }
 

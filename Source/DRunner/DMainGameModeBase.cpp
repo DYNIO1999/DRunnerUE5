@@ -7,7 +7,6 @@
 #include "DGameInstance.h"
 #include "DCoin.h"
 #include "DStandardPlatform.h"
-#include "Components/CapsuleComponent.h"
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -36,6 +35,7 @@ void ADMainGameModeBase::StartPlay()
 	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
 	
 	float PlayerStartYOffset = 0;
+	
 
 	if (MyGameInstance)
 	{
@@ -52,6 +52,7 @@ void ADMainGameModeBase::StartPlay()
 		float PlatformPosZ = 0;
 
 		float PlatformConstantOffset = 1100;
+
 		
 		for (size_t i=0;i<ImageRawData.Num();i++)
 		{
@@ -102,13 +103,17 @@ void ADMainGameModeBase::StartPlay()
 					{
 						FActorSpawnParameters SpawnParams;
 						SpawnParams.Owner = this;
-					
-						FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
+
+						
+						float angleYaw  = GetAngleBasedOnPlatformDirection(PlatformDirection);
+						FRotator SpawnRotation = FRotator(0.0f, angleYaw, 0.0f);
 						
 						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
 				
 						ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
-						
+
+
+
 						StandardPlatform->InitializePlatform(PlatformType, PlatformDirection,PlatformMovement);
 						
 					}
@@ -141,19 +146,29 @@ void ADMainGameModeBase::StartPlay()
 TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformType PlatformTypePar,
 	const EGamePlatformDirection PlatformDirectionPar, const EGamePlatformMovementType MovementTypePar)
 {
-	if (PlatformTypePar == EGamePlatformType::Standard && PlatformDirectionPar == EGamePlatformDirection::Forward)
+	if (PlatformTypePar == EGamePlatformType::Standard)
 	{
 		return ForwardStandardPlatform;
 	}
 
-	if(PlatformTypePar == EGamePlatformType::Standard && PlatformDirectionPar == EGamePlatformDirection::Left)
+	if(PlatformTypePar == EGamePlatformType::LeftPlatform)
 	{
 		return LeftStandardPlatformActor;
 	}
 
-	if(PlatformTypePar == EGamePlatformType::Standard && PlatformDirectionPar == EGamePlatformDirection::Right)
+	if(PlatformTypePar == EGamePlatformType::RightPlatform)
 	{
 		return RightStandardPlatform;
+	}
+
+	if(PlatformTypePar == EGamePlatformType::Ascending)
+	{
+		return AscendingPlatform;
+	}
+
+	if(PlatformTypePar == EGamePlatformType::Descending)
+	{
+		return DescendingPlatform;
 	}
 	
 	return ForwardStandardPlatform;

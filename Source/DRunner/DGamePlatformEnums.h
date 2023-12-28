@@ -10,6 +10,8 @@ enum class EGamePlatformType : uint8
 	Standard = 0 UMETA(DisplayName = "Standard"),
 	Ascending = 10 UMETA(DisplayName = "Ascending"),
 	Descending = 20 UMETA(DisplayName = "Descending"),
+	RightPlatform =  30 UMETA(DisplayName = "RightPlatform"),
+	LeftPlatform = 40 UMETA(DisplayName = "LeftPlatform")
 };
 
 UENUM(BlueprintType) 
@@ -19,7 +21,6 @@ enum class EGamePlatformDirection : uint8
 	Forward = 0 UMETA(DisplayName = "Forward"),
 	Right =  50 UMETA(DisplayName = "Right"),
 	Left = 250 UMETA(DisplayName = "Left")
-	
 };
 
 UENUM(BlueprintType) 
@@ -51,6 +52,14 @@ static EGamePlatformType CheckPlatformType(const uint8 Value)
 		PlatformTypeVal= EGamePlatformType::Descending;
 		break;
 
+	case static_cast<int>(EGamePlatformType::LeftPlatform):
+		PlatformTypeVal= EGamePlatformType::LeftPlatform;
+		break;
+
+	case static_cast<int>(EGamePlatformType::RightPlatform):
+		PlatformTypeVal= EGamePlatformType::RightPlatform;
+		break;
+
 	default:
 		PlatformTypeVal= EGamePlatformType::None;
 			break;
@@ -77,6 +86,27 @@ static EGamePlatformDirection CheckPlatformDirection(const uint8 Value)
 			
 	}
 	return PlatformDirection;
+}
+
+static float GetAngleBasedOnPlatformDirection(const EGamePlatformDirection Value)
+{
+	float Angle; 
+	switch (Value) {  
+	case EGamePlatformDirection::Forward:
+		Angle= 0.0;
+		break;
+	case EGamePlatformDirection::Right:
+		Angle = 90.0;
+		break;
+	case EGamePlatformDirection::Left:
+		Angle = -90.0;
+		break;
+	default:
+		Angle = 0.0;
+		break;
+			
+	}
+	return Angle;
 }
 
 static EGamePlatformMovementType CheckPlatformMovementType(const uint8 Value)
