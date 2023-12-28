@@ -83,6 +83,11 @@ void ADMainGameModeBase::StartPlay()
 				if (IsValid)
 				{
 					FVector PlatformVectorPos= FVector(PlatformPosX, PlatformPosY, PlatformPosZ);
+
+					EGamePlatformDirection PlatformDirection = CheckPlatformDirection(Pixel[1]);
+					EGamePlatformMovementType PlatformMovement = CheckPlatformMovementType(Pixel[2]);
+					
+					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(PlatformType, PlatformDirection, PlatformMovement);
 					
 					if (GetWorld())
 					{
@@ -91,13 +96,11 @@ void ADMainGameModeBase::StartPlay()
 					
 						FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
 						
-						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ForwardStandardPlatform, PlatformVectorPos, SpawnRotation, SpawnParams);
+						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
 				
 						ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
 						
-
-						//StandardPlatform->InitializePlatform(PlatformType,);
-						
+						StandardPlatform->InitializePlatform(PlatformType, PlatformDirection,PlatformMovement);
 						
 					}
 				}
