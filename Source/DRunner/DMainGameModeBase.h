@@ -1,23 +1,30 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "DGamePlatformEnums.h"
 #include "DMainGameModeBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DRUNNER_API ADMainGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	//get data from game-instance
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Actor To Spawn")
-	TSubclassOf<AActor> ActorToSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> ForwardStandardPlatform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> LeftStandardPlatformActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> RightStandardPlatform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> AscendingStandardPlatform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> DescendingStandardPlatform;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Image File Name")
 	FString ImageFileName;
@@ -32,6 +39,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Current Amount Coins")
 	int CurrentGatheredCoins;
 
+	TSubclassOf<AActor> ChooseActorToSpawn(
+		const EGamePlatformType PlatformTypePar,
+			const EGamePlatformDirection PlatformDirectionPar,
+			const EGamePlatformMovementType MovementTypePar);
+	
 
 	UFUNCTION()
 	void CoinCollected();

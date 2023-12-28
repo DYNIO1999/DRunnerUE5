@@ -73,20 +73,17 @@ void ADMainGameModeBase::StartPlay()
 					Pixel.Push(ImageRawData[j]);
 						
 				}
-				
-				for(size_t k=0;k<BytesPerPixel-1;k++)
-				{
-					//Choosing right platform
-					if (Pixel[k] == 255)
-					{
-						IsValid = false;
-					}
-				}
 
+				EGamePlatformType PlatformType = CheckPlatformType(Pixel[0]);
+				if (PlatformType == EGamePlatformType::None)
+				{
+					IsValid = false;
+				}
+				
 				if (IsValid)
 				{
 					FVector PlatformVectorPos= FVector(PlatformPosX, PlatformPosY, PlatformPosZ);
-			
+					
 					if (GetWorld())
 					{
 						FActorSpawnParameters SpawnParams;
@@ -95,7 +92,13 @@ void ADMainGameModeBase::StartPlay()
 						FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
 						
 						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
-					//	UE_LOG(LogTemp,Error, TEXT("Spawned Actor %d"), PixelCount);
+				
+						ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
+						
+
+						//StandardPlatform->InitializePlatform(PlatformType,);
+						
+						
 					}
 				}
 				
@@ -119,7 +122,13 @@ void ADMainGameModeBase::StartPlay()
 	}
 
 }
- 
+
+
+TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformType PlatformTypePar,
+	const EGamePlatformDirection PlatformDirectionPar, const EGamePlatformMovementType MovementTypePar)
+{
+	return ActorToSpawn;
+}
 
 void ADMainGameModeBase::CoinCollected()
 {

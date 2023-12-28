@@ -21,16 +21,14 @@ ADStandardPlatform::ADStandardPlatform()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-ADStandardPlatform::ADStandardPlatform(
+void ADStandardPlatform::InitializePlatform(
 	const EGamePlatformType PlatformTypePar,
 	const EGamePlatformDirection PlatformDirectionPar,
 	const EGamePlatformMovementType MovementTypePar)
-		:PlatformType(PlatformTypePar),
-		PlatformDirection(PlatformDirectionPar),
-		MovementType(MovementTypePar)
 {
-	
-	
+	PlatformType = PlatformTypePar;
+	PlatformDirection =  PlatformDirectionPar;
+	PlatformMovementType= MovementTypePar;
 }
 
 void ADStandardPlatform::BeginPlay()

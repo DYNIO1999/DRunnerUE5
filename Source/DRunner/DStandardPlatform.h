@@ -17,16 +17,17 @@ class DRUNNER_API ADStandardPlatform : public AActor
 	
 public:	
 	ADStandardPlatform();
-	ADStandardPlatform(
-		const EGamePlatformType PlatformTypePar,
-		const EGamePlatformDirection PlatformDirectionPar,
-		const EGamePlatformMovementType MovementTypePar);
+	
 
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-
+	void InitializePlatform(
+			const EGamePlatformType PlatformTypePar,
+			const EGamePlatformDirection PlatformDirectionPar,
+			const EGamePlatformMovementType MovementTypePar);
+	
 	UPROPERTY(EditAnywhere, Category = "Type Platform")
 	EGamePlatformType PlatformType;
 
@@ -34,7 +35,7 @@ public:
 	EGamePlatformDirection PlatformDirection;
 
 	UPROPERTY(EditAnywhere, Category = "Type Platform")
-	EGamePlatformMovementType MovementType;
+	EGamePlatformMovementType PlatformMovementType;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
