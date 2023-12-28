@@ -17,9 +17,8 @@ enum class EGamePlatformDirection : uint8
 {
 	None = 255 UMETA(DisplayName = "None"),
 	Forward = 0 UMETA(DisplayName = "Forward"),
-	Backward =  10 UMETA(DisplayName = "Backward"),
-	Right =  20 UMETA(DisplayName = "Right"),
-	Left = 30 UMETA(DisplayName = "Left")
+	Right =  50 UMETA(DisplayName = "Right"),
+	Left = 250 UMETA(DisplayName = "Left")
 	
 };
 
@@ -28,7 +27,8 @@ enum class EGamePlatformMovementType : uint8
 {
 	None = 255 UMETA(DisplayName = "None"),
 	Running = 0 UMETA(DisplayName = "Running"),
-	Walking = 10 UMETA(DisplayName = "Walking"),
+	Walking = 125 UMETA(DisplayName = "Walking"),
+	SpawnPoint = 250 UMETA(DisplayName = "SpawnPoint")
 };
 
 
@@ -65,9 +65,6 @@ static EGamePlatformDirection CheckPlatformDirection(const uint8 Value)
 	case static_cast<int>(EGamePlatformDirection::Forward):
 		PlatformDirection= EGamePlatformDirection::Forward;
 		break;
-	case static_cast<int>(EGamePlatformDirection::Backward):
-		PlatformDirection= EGamePlatformDirection::Backward;
-		break;
 	case static_cast<int>(EGamePlatformDirection::Right):
 		PlatformDirection= EGamePlatformDirection::Right;
 		break;
@@ -95,6 +92,11 @@ static EGamePlatformMovementType CheckPlatformMovementType(const uint8 Value)
 		case static_cast<int>(EGamePlatformMovementType::Running):
 
 		PlatformMovementType= EGamePlatformMovementType::Running;
+		break;
+
+		case static_cast<int>(EGamePlatformMovementType::SpawnPoint):
+
+		PlatformMovementType= EGamePlatformMovementType::SpawnPoint;
 		break;
 	
 		default:

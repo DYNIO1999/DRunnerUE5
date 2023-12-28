@@ -52,7 +52,7 @@ FUImageLevelData UTestFunctions::ReadImage(const FString& ImageName)
 		{
 			TArray64<uint8> UncompressedData;
             
-			ImageWrap->GetRaw( UncompressedData);
+			ImageWrap->GetRaw( ERGBFormat::RGBA,ImageWrap->GetBitDepth(), UncompressedData);
 
 			ImageWidth = ImageWrap->GetWidth();
 			ImageHeight = ImageWrap->GetHeight();

@@ -16,11 +16,6 @@ class DRUNNER_API UDGameInstance : public UGameInstance
 public:
 
 	UDGameInstance();
-
-	//Level choose options ....
-	//MainLevel loading off map -> GameModeBase -> spawn timer and
-	//Setting up all of actors
-	//Spawn in code some actors based on map
 	
 	UPROPERTY(EditAnywhere, Category = "LevelSettings")
 	int MaxPointsToGather;
@@ -29,4 +24,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Image Level Data")
 	FUImageLevelData ImageLevelInfo;
+
+	UPROPERTY(EditAnywhere, Category="Platform Offset")
+	float PlatformConstantOffset{1100};
 };

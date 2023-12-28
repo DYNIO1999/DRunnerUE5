@@ -7,6 +7,7 @@
 #include "DGameInstance.h"
 #include "DCoin.h"
 #include "DStandardPlatform.h"
+#include "Components/CapsuleComponent.h"
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -34,6 +35,8 @@ void ADMainGameModeBase::StartPlay()
 
 	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
 	
+	float PlayerStartYOffset = 0;
+
 	if (MyGameInstance)
 	{
 		
@@ -49,7 +52,7 @@ void ADMainGameModeBase::StartPlay()
 		float PlatformPosZ = 0;
 
 		float PlatformConstantOffset = 1100;
-
+		
 		for (size_t i=0;i<ImageRawData.Num();i++)
 		{
 			
@@ -75,10 +78,12 @@ void ADMainGameModeBase::StartPlay()
 				}
 
 				EGamePlatformType PlatformType = CheckPlatformType(Pixel[0]);
+				//UE_LOG(LogTemp, Warning, TEXT("Pixel r: %d g: %d b: %d"), Pixel[0], Pixel[1], Pixel[2]);
 				if (PlatformType == EGamePlatformType::None)
 				{
 					IsValid = false;
 				}
+				
 				
 				if (IsValid)
 				{
@@ -87,6 +92,10 @@ void ADMainGameModeBase::StartPlay()
 					EGamePlatformDirection PlatformDirection = CheckPlatformDirection(Pixel[1]);
 					EGamePlatformMovementType PlatformMovement = CheckPlatformMovementType(Pixel[2]);
 					
+					if (PlatformMovement == EGamePlatformMovementType::SpawnPoint)
+					{
+						PlayerStartYOffset = PlatformPosY;	
+					}
 					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(PlatformType, PlatformDirection, PlatformMovement);
 					
 					if (GetWorld())
@@ -104,6 +113,7 @@ void ADMainGameModeBase::StartPlay()
 						
 					}
 				}
+
 				
 				PlatformPosX+=PlatformConstantOffset;
 				PixelCount++;
@@ -123,7 +133,8 @@ void ADMainGameModeBase::StartPlay()
 		ADCoin* TempCoin = Cast<ADCoin>(FoundCoins[i]);
 		TempCoin->OnEventGathered.AddDynamic(this, &ADMainGameModeBase::CoinCollected);
 	}
-
+	
+	SetPlayerStartLocation(PlayerStartYOffset);
 }
 
 
@@ -152,4 +163,39 @@ void ADMainGameModeBase::CoinCollected()
 {
 	CurrentGatheredCoins++;
 	UE_LOG(LogTemp, Warning, TEXT("Coin Gathered %d"), CurrentGatheredCoins);
+}
+
+
+void ADMainGameModeBase::SetPlayerStartLocation(float PlayerStartOffsetY)
+{
+
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		PlayerController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(World, 0));
+	}
+	
+	if(PlayerController)
+	{
+		UGameInstance* GameInstance = GetGameInstance();
+
+		UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+
+		const int ImageWidth = MyGameInstance->ImageLevelInfo.ImageWidthSize;
+		const float Offset = MyGameInstance->PlatformConstantOffset;
+
+		APawn* PlayerPawn  = PlayerController->GetPawn();
+
+		FVector ActorLocation = PlayerPawn->GetActorLocation();
+		ActorLocation+=FVector(0,PlayerStartOffsetY, 0);
+
+		PlayerPawn->SetActorLocation(ActorLocation);
+		
+		//FVector ActorLocation = PlayerStart->GetActorLocation();
+		//ActorLocation+=FVector(0, ((ImageWidth-1)*Offset)/2.0f - (Offset/2.0f), 0);
+
+		//ActorLocation+=FVector(0,PlayerStartOffsetY, 0);
+
+		//PlayerStart->SetActorLocation(ActorLocation);
+	}
 }

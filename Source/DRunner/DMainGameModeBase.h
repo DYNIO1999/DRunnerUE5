@@ -3,7 +3,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "DGamePlatformEnums.h"
+#include "GameFramework/PlayerController.h"
 #include "DMainGameModeBase.generated.h"
+
 
 UCLASS()
 class DRUNNER_API ADMainGameModeBase : public AGameModeBase
@@ -11,6 +13,9 @@ class DRUNNER_API ADMainGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 
+	UPROPERTY()
+	APlayerController* PlayerController;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
 	TSubclassOf<AActor> ForwardStandardPlatform;
 
@@ -47,5 +52,8 @@ public:
 
 	UFUNCTION()
 	void CoinCollected();
+	
+	void SetPlayerStartLocation(float PlayerStartOffsetY);
+	
 	
 };
