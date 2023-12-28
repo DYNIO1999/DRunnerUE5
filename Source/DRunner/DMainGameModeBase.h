@@ -21,10 +21,10 @@ public:
 	TSubclassOf<AActor> RightStandardPlatform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
-	TSubclassOf<AActor> AscendingStandardPlatform;
+	TSubclassOf<AActor> AscendingPlatform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
-	TSubclassOf<AActor> DescendingStandardPlatform;
+	TSubclassOf<AActor> DescendingPlatform;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Image File Name")
 	FString ImageFileName;

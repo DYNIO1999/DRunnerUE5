@@ -91,7 +91,7 @@ void ADMainGameModeBase::StartPlay()
 					
 						FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
 						
-						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
+						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ForwardStandardPlatform, PlatformVectorPos, SpawnRotation, SpawnParams);
 				
 						ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
 						
@@ -127,7 +127,22 @@ void ADMainGameModeBase::StartPlay()
 TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformType PlatformTypePar,
 	const EGamePlatformDirection PlatformDirectionPar, const EGamePlatformMovementType MovementTypePar)
 {
-	return ActorToSpawn;
+	if (PlatformTypePar == EGamePlatformType::Standard && PlatformDirectionPar == EGamePlatformDirection::Forward)
+	{
+		return ForwardStandardPlatform;
+	}
+
+	if(PlatformTypePar == EGamePlatformType::Standard && PlatformDirectionPar == EGamePlatformDirection::Left)
+	{
+		return LeftStandardPlatformActor;
+	}
+
+	if(PlatformTypePar == EGamePlatformType::Standard && PlatformDirectionPar == EGamePlatformDirection::Right)
+	{
+		return RightStandardPlatform;
+	}
+	
+	return ForwardStandardPlatform;
 }
 
 void ADMainGameModeBase::CoinCollected()
