@@ -66,3 +66,18 @@ FUImageLevelData UTestFunctions::ReadImage(const FString& ImageName)
 	}
 	return  FUImageLevelData(ImageDataToBeCopied, ImageWidth, ImageHeight, 4);
 }
+
+void UTestFunctions::SaveContentToFile(const FString& FileName, const FString& FileContent)
+{
+	const FString ProjectDirectory = FPaths::ProjectDir();
+	const  FString LoggingDirName{"LoggedInfo"};
+
+	const FString PathToFile= ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".txt"));
+	const FString FormattedFileContent(FileContent+TEXT("\n"));
+
+	UE_LOG(LogTemp, Error, TEXT("FormattedFileContent:%s"), *PathToFile);
+	UE_LOG(LogTemp, Error, TEXT("FormattedFileContent:%s"), *FormattedFileContent);
+	bool Result = FFileHelper::SaveStringToFile(FormattedFileContent, *PathToFile,FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+	
+	UE_LOG(LogTemp, Error, TEXT("Result of Saving:%d"), Result);
+}

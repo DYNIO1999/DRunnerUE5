@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Misc/FileHelper.h"
 #include "TestFunctions.generated.h"
+
 
 USTRUCT(BlueprintType)
 struct FUImageLevelData
@@ -47,5 +49,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="TestReadPNG")
 	static FUImageLevelData ReadImage(const FString& PathToImage);
+
+	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
+	static void SaveContentToFile(const FString& FileName, const FString& FileContent);
 	
 };

@@ -52,7 +52,6 @@ void ADMainGameModeBase::StartPlay()
 		float PlatformPosZ = 0;
 
 		float PlatformConstantOffset = 1100;
-
 		
 		for (size_t i=0;i<ImageRawData.Num();i++)
 		{
@@ -130,7 +129,7 @@ void ADMainGameModeBase::StartPlay()
 	TArray<AActor*> FoundCoins;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
 	MaxCoinsOnLevel= FoundCoins.Num();
-	UE_LOG(LogTemp, Warning, TEXT("Max Coins on level %d"), MaxCoinsOnLevel);
+	//UE_LOG(LogTemp, Warning, TEXT("Max Coins on level %d"), MaxCoinsOnLevel);
 	
 	
 	for(int i = 0; i < FoundCoins.Num(); i++)
@@ -178,6 +177,11 @@ void ADMainGameModeBase::CoinCollected()
 {
 	CurrentGatheredCoins++;
 	UE_LOG(LogTemp, Warning, TEXT("Coin Gathered %d"), CurrentGatheredCoins);
+	UGameInstance* GameInstance = GetGameInstance();
+
+	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+
+	MyGameInstance->CurrentGatheredPoints = CurrentGatheredCoins;
 }
 
 

@@ -1,6 +1,8 @@
 #include "DStandardPlatform.h"
 #include "DSpawnCoinComp.h"
 #include "Components/SphereComponent.h"
+#include "DLoggingComponent.h"
+#include "DPlayer.h"
 
 ADStandardPlatform::ADStandardPlatform()
 {
@@ -17,8 +19,11 @@ ADStandardPlatform::ADStandardPlatform()
 	CoinLocalisation->SetupAttachment(RootComponent);
 	
 	CoinSpawnComponent = CreateDefaultSubobject<UDSpawnCoinComp>(TEXT("CoinSpawnComponent"));
+
+	LogComponent = CreateDefaultSubobject<UDLoggingComponent>(TEXT("LogComponent"));
 	
 	PrimaryActorTick.bCanEverTick = true;
+	
 }
 
 void ADStandardPlatform::InitializePlatform(
@@ -38,11 +43,23 @@ void ADStandardPlatform::BeginPlay()
 
 	const FTransform& CoinLocalisationTransform = CoinLocalisation->GetComponentTransform();
 	CoinSpawnComponent->SpawnCoinActor(CoinLocalisationTransform);
+
+	MeshComp->OnComponentBeginOverlap.AddDynamic(this, &ADStandardPlatform::OnOverlapBegin);
 }
 
 void ADStandardPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ADStandardPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != this && OtherActor->IsA(ADPlayer::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SAVED TO FILE"));
+		LogComponent->SaveLoggedData();
+	}
 }
 

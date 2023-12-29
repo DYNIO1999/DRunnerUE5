@@ -9,6 +9,7 @@
 
 class UDSpawnCoinComp;
 class USphereComponent;
+class UDLoggingComponent;
 
 UCLASS()
 class DRUNNER_API ADStandardPlatform : public AActor
@@ -46,9 +47,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Coin Spawn Component")
 	TObjectPtr<UDSpawnCoinComp> CoinSpawnComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LogComponent")
+	TObjectPtr<UDLoggingComponent> LogComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USphereComponent> SphereComp;
 	
 	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	
 };

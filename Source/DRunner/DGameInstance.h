@@ -17,14 +17,20 @@ public:
 
 	UDGameInstance();
 	
-	UPROPERTY(EditAnywhere, Category = "LevelSettings")
+	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
 	int MaxPointsToGather;
-	UPROPERTY(EditAnywhere, Category = "LevelSettings")
+	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
 	int CurrentGatheredPoints;
 
-	UPROPERTY(EditAnywhere, Category="Image Level Data")
+	UPROPERTY(BlueprintReadWrite, Category="Image Level Data")
 	FUImageLevelData ImageLevelInfo;
 
-	UPROPERTY(EditAnywhere, Category="Platform Offset")
+	UPROPERTY(BlueprintReadWrite, Category="Platform Offset")
 	float PlatformConstantOffset{1100};
+
+	UPROPERTY(BlueprintReadWrite, Category="Platform Time Limit")
+	float TimeInSecondsPerPlatform;
+
+	UPROPERTY(BlueprintReadWrite, Category="Player Status")
+	bool  IsPlayerDead;
 };

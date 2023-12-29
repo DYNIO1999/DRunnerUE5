@@ -40,6 +40,11 @@ void ADPlayer::BeginPlay()
 	
 }
 
+void ADPlayer::PlayerDead()
+{
+	OnEventPlayerLost.Broadcast();
+}
+
 // Called every frame
 void ADPlayer::Tick(float DeltaTime)
 {

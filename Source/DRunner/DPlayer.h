@@ -25,7 +25,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventTriggered);
+	
+	UPROPERTY(BlueprintAssignable, Category = "EventPlayerLost")
+	FOnEventTriggered OnEventPlayerLost;
+
+	UFUNCTION(BlueprintCallable, Category = "EventPlayerLost")
+	void PlayerDead();
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -81,4 +90,7 @@ private:
 
 	void ChangeSpeedValue(float SpeedValue) const;
 
+	
+	
+	//OnEventGathered.Broadcast();
 };
