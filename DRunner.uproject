@@ -40,6 +40,10 @@
 				"Linux",
 				"Android"
 			]
+		},
+		{
+			"Name": "VirtuSphereClient",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
