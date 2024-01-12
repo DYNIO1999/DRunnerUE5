@@ -26,6 +26,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	
+	UPROPERTY(EditAnywhere, Category="Player VituSphere Movement")
+	FVector PlayerVirtuSphereMovement;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventTriggered);
 	

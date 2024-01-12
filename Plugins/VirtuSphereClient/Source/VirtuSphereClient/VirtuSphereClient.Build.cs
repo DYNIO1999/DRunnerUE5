@@ -30,9 +30,9 @@ public class VirtuSphereClient : ModuleRules
             }
 			);
 
-        RuntimeDependencies.Add("$(TargetOutputDir)/nethost.dll", Path.Combine(PluginDirectory, "Source/ThirdParty/nethost/nethost.dll"));
-        RuntimeDependencies.Add("$(TargetOutputDir)/VirtuSphereClient.dll", Path.Combine(PluginDirectory, "Source/ThirdParty/VirtuSphereClient/VirtuSphereClient.dll"));
-        RuntimeDependencies.Add("$(TargetOutputDir)/VirtuSphereClient.runtimeconfig.json", Path.Combine(PluginDirectory, "Source/ThirdParty/VirtuSphereClient/VirtuSphereClient.runtimeconfig.json"));
+        //RuntimeDependencies.Add("$(TargetOutputDir)/nethost.dll", Path.Combine(PluginDirectory, "Source/ThirdParty/nethost/nethost.dll"));
+        //RuntimeDependencies.Add("$(TargetOutputDir)/VirtuSphereClient.dll", Path.Combine(PluginDirectory, "Source/ThirdParty/VirtuSphereClient/VirtuSphereClient.dll"));
+        //RuntimeDependencies.Add("$(TargetOutputDir)/VirtuSphereClient.runtimeconfig.json", Path.Combine(PluginDirectory, "Source/ThirdParty/VirtuSphereClient/VirtuSphereClient.runtimeconfig.json"));
 
 
         PublicDependencyModuleNames.AddRange(

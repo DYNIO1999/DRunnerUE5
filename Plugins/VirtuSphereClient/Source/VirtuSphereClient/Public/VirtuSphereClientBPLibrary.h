@@ -28,8 +28,8 @@ class UVirtuSphereClientBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "VirtuSphereClient sample test testing"), Category = "VirtuSphereClient")
-	static float VirtuSphereClientSampleFunction(float Param);
+	//UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "VirtuSphereClient sample test testing"), Category = "VirtuSphereClient")
+	//static float VirtuSphereClientSampleFunction(float Param);
 
 	/*UFUNCTION(BlueprintCallable, meta = (DisplayName = "Connect to VirtuSphere", Keywords = "VirtuSphereClient connect"), Category = "VirtuSphereClient")
 	static void Connect(FString host = "127.0.0.1", int port = 4445);
