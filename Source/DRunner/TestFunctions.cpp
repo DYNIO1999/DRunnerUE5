@@ -31,7 +31,7 @@ FUImageLevelData UTestFunctions::ReadImage(const FString& ImageName)
 	const FString ProjectDirectory = FPaths::ProjectDir();
 	const  FString ImageDirectoryName{"LevelData"};
 
-	const FString PathToImage = ProjectDirectory+TEXT("/")+ImageDirectoryName+TEXT("/")+ImageName;
+	const FString PathToImage = FPaths::ConvertRelativePathToFull(ProjectDirectory+ImageDirectoryName+TEXT("/")+ImageName);
 	
 	IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
 	
@@ -72,7 +72,7 @@ void UTestFunctions::SaveContentToFile(const FString& FileName, const FString& F
 	const FString ProjectDirectory = FPaths::ProjectDir();
 	const  FString LoggingDirName{"LoggedInfo"};
 
-	const FString PathToFile= ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".txt"));
+	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".txt")));
 	const FString FormattedFileContent(FileContent+TEXT("\n"));
 
 	UE_LOG(LogTemp, Error, TEXT("FormattedFileContent:%s"), *PathToFile);
