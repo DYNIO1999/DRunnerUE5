@@ -9,7 +9,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
-
 // Sets default values
 ADPlayer::ADPlayer()
 {
