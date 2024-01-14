@@ -21,9 +21,7 @@ ADStandardPlatform::ADStandardPlatform()
 	CoinSpawnComponent = CreateDefaultSubobject<UDSpawnCoinComp>(TEXT("CoinSpawnComponent"));
 
 	LogComponent = CreateDefaultSubobject<UDLoggingComponent>(TEXT("LogComponent"));
-	
 	PrimaryActorTick.bCanEverTick = true;
-	
 }
 
 void ADStandardPlatform::InitializePlatform(
@@ -45,21 +43,50 @@ void ADStandardPlatform::BeginPlay()
 	CoinSpawnComponent->SpawnCoinActor(CoinLocalisationTransform);
 
 	MeshComp->OnComponentBeginOverlap.AddDynamic(this, &ADStandardPlatform::OnOverlapBegin);
+	MeshComp->OnComponentEndOverlap.AddDynamic(this, &ADStandardPlatform::OnOverlapEnd);
+	CanProduceLog = false;
+	LoggingDelayInSeconds =0.1f;
 }
 
 void ADStandardPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	// if(CanProduceLog)
+	// {
+	// 	ProduceLog();
+	// }
 }
 
 void ADStandardPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor != this && OtherActor->IsA(ADPlayer::StaticClass()))
+	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SAVED TO FILE"));
-		LogComponent->SaveLoggedData();
+		//UE_LOG(LogTemp, Error, TEXT("STARTED COLLIDING"));
+		CanProduceLog =  true;
+		GetWorldTimerManager().SetTimer(MyTimerHandle, this, &ADStandardPlatform::ProduceLog, LoggingDelayInSeconds, true);
+	}
+}
+
+void ADStandardPlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase))
+	{
+		CanProduceLog =  false;
+		GetWorldTimerManager().ClearTimer(MyTimerHandle);
+	}
+}
+
+void ADStandardPlatform::ProduceLog()
+{
+	if(CanProduceLog)
+	{
+		//get player location?
+		LogComponent->SaveLoggedData(
+			static_cast<int>(PlatformType),
+			static_cast<int>(PlatformDirection),
+			static_cast<int>(PlatformMovementType));
 	}
 }
 

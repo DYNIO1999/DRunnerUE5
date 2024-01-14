@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "TestFunctions.h"
+#include "VirtuSphereClient/Public/VirtuSphereClientStructs.h"
 #include "DGameInstance.generated.h"
 
 
@@ -33,4 +34,22 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category="Player Status")
 	bool  IsPlayerDead;
+
+	UPROPERTY(BlueprintReadWrite, Category="Motor State")
+	TArray<FMotorStateEvent> CurrentMotorStateEvent;
+
+	UPROPERTY(BlueprintReadWrite, Category="Controller State")
+	FControllerStateEvent CurrentControllerStateEvent;
+
+	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
+	FVector PlayerCurrentPosition;
+
+	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
+	FRotator PlayerCurrentRotation;
+
+	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
+	float PlayerCurrentSpeed; 
+
+	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
+	FVector SpherePoseEvent;
 };

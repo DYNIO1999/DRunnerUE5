@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Misc/FileHelper.h"
+#include "VirtuSphereClient/Public/VirtuSphereClientStructs.h"
 #include "TestFunctions.generated.h"
 
 
@@ -52,5 +53,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
 	static void SaveContentToFile(const FString& FileName, const FString& FileContent);
-	
+
+	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
+
+	static FString PreProcessLogData(
+		const FString& CurrentTime,
+	const int PlatformType,
+	const int PlatformDirection,
+	const int PlatformMovementType,
+	const float PlayerSpeed,
+	const FVector& PlayerPosition,
+	const FRotator& PlayerRotation,
+	const FMotorStateEvent& MotorStates);
 };

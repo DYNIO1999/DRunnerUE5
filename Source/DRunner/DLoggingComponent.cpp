@@ -1,5 +1,8 @@
 #include "DLoggingComponent.h"
+#include "DGameInstance.h"
 #include "TestFunctions.h"
+#include "Kismet/GameplayStatics.h"
+
 UDLoggingComponent::UDLoggingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -10,9 +13,6 @@ void UDLoggingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
-
-	
 }
 
 void UDLoggingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -21,11 +21,33 @@ void UDLoggingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	
 }
 
-void UDLoggingComponent::SaveLoggedData()
+void UDLoggingComponent::SaveLoggedData(
+	int CurrentPlatformType,
+	int CurrentPlatformDirection,
+	int CurrentPlatformMovementType)
 {
-	//DATE AND TIME | PLATFORM TYPE | PLATFORM DIRECTION | MOVEMENT TYPE |....
-	FDateTime Now = FDateTime::Now();
-	FString CurrentTimeAsString = Now.ToString();
-	UTestFunctions::SaveContentToFile(FString("LoggedData"), CurrentTimeAsString);
+	const FDateTime Now = FDateTime::Now();
+	const FString CurrentTimeAsString = Now.ToString();
+	
+	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if(DGameInstance)
+	{
+
+		for(int i =0; i< 4; i++)
+		{
+			const FString ContentToBeSaved =
+				UTestFunctions::PreProcessLogData(
+					CurrentTimeAsString,
+					CurrentPlatformType,
+					CurrentPlatformDirection,
+					CurrentPlatformMovementType,
+					DGameInstance->PlayerCurrentSpeed,
+					DGameInstance->PlayerCurrentPosition,
+					DGameInstance->PlayerCurrentRotation,
+					DGameInstance->CurrentMotorStateEvent[i]);	
+				UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);		
+		}
+	}
 }
 

@@ -206,15 +206,7 @@ void ADMainGameModeBase::SetPlayerStartLocation(float PlayerStartOffsetY)
 		APawn* PlayerPawn  = PlayerController->GetPawn();
 
 		FVector ActorLocation = PlayerPawn->GetActorLocation();
-		ActorLocation+=FVector(0,PlayerStartOffsetY, 0);
-
+		ActorLocation+=FVector(0,PlayerStartOffsetY, 0.0f);
 		PlayerPawn->SetActorLocation(ActorLocation);
-		
-		//FVector ActorLocation = PlayerStart->GetActorLocation();
-		//ActorLocation+=FVector(0, ((ImageWidth-1)*Offset)/2.0f - (Offset/2.0f), 0);
-
-		//ActorLocation+=FVector(0,PlayerStartOffsetY, 0);
-
-		//PlayerStart->SetActorLocation(ActorLocation);
 	}
 }

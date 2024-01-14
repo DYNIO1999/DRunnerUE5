@@ -14,12 +14,17 @@ class DRUNNER_API UDLoggingComponent : public UActorComponent
 
 public:	
 	UDLoggingComponent();
+	
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void SaveLoggedData(); 
+	void SaveLoggedData(
+		int CurrentPlatformType,
+		int CurrentPlatformDirection,
+		int CurrentPlatformMovementType); 
 		
 };

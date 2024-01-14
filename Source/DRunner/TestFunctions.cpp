@@ -71,13 +71,42 @@ void UTestFunctions::SaveContentToFile(const FString& FileName, const FString& F
 {
 	const FString ProjectDirectory = FPaths::ProjectDir();
 	const  FString LoggingDirName{"LoggedInfo"};
+	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".csv")));
 
-	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".txt")));
-	const FString FormattedFileContent(FileContent+TEXT("\n"));
+	UE_LOG(LogTemp, Warning, TEXT("FormattedFileContent:%s"), *PathToFile);
+	UE_LOG(LogTemp, Warning, TEXT("FormattedFileContent:%s"), *FileContent);
+	bool Result = FFileHelper::SaveStringToFile(FileContent, *PathToFile,FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+}
 
-	UE_LOG(LogTemp, Error, TEXT("FormattedFileContent:%s"), *PathToFile);
-	UE_LOG(LogTemp, Error, TEXT("FormattedFileContent:%s"), *FormattedFileContent);
-	bool Result = FFileHelper::SaveStringToFile(FormattedFileContent, *PathToFile,FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
-	
-	UE_LOG(LogTemp, Error, TEXT("Result of Saving:%d"), Result);
+FString UTestFunctions::PreProcessLogData(
+	const FString& CurrentTime,
+	const int PlatformType,
+	const int PlatformDirection,
+	const int PlatformMovementType,
+	const float PlayerSpeed,
+	const FVector& PlayerPosition,
+	const FRotator& PlayerRotation,
+	const FMotorStateEvent& MotorState)
+{
+	FString RowToSave = FString::Printf(TEXT("%s,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f\n"), *CurrentTime,
+		PlatformType,
+		PlatformDirection,
+		PlatformMovementType,
+		PlayerPosition.X,
+		PlayerPosition.Y,
+		PlayerPosition.Z,
+		PlayerRotation.Roll,
+		PlayerRotation.Pitch,
+		PlayerRotation.Yaw,
+		PlayerSpeed,
+		MotorState.timestamp,
+		MotorState.controllerId,
+		MotorState.motorFlags,
+		MotorState.hallPosition,
+		MotorState.encoderPosition,
+		MotorState.motorVelocity,
+		MotorState.motorVoltage,
+		MotorState.motorCurrent);
+
+	return RowToSave;
 }

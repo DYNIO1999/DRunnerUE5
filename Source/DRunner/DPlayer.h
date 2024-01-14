@@ -81,6 +81,11 @@ public:
 	void StartRunning();
 	void StartJump();
 	void StopRunning();
+
+	UPROPERTY()
+	FTimerHandle PlayerDataSavingTimer;
+
+	void SavePlayerData();
 	
 private:
 	UPROPERTY()

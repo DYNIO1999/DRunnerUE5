@@ -29,6 +29,9 @@ public:
 			const EGamePlatformDirection PlatformDirectionPar,
 			const EGamePlatformMovementType MovementTypePar);
 	
+	UPROPERTY(EditAnywhere, Category = "Logging")
+	bool CanProduceLog;
+	
 	UPROPERTY(EditAnywhere, Category = "Type Platform")
 	EGamePlatformType PlatformType;
 
@@ -38,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Type Platform")
 	EGamePlatformMovementType PlatformMovementType;
 	
-	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -58,5 +61,14 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY()
+	FTimerHandle MyTimerHandle;
+
+	void ProduceLog();
 	
+	UPROPERTY(EditAnywhere, Category = "Logging Delay")
+	float LoggingDelayInSeconds;
 };

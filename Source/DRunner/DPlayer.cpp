@@ -2,16 +2,12 @@
 
 
 #include "DPlayer.h"
-
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Components/SphereComponent.h"
-
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -37,7 +33,7 @@ void ADPlayer::BeginPlay()
 	
 	CurrentCharacterSpeed = CharacterWalkSpeed;
 	CharacterMovementComp->MaxWalkSpeed = CurrentCharacterSpeed;
-	
+	GetWorldTimerManager().SetTimer(PlayerDataSavingTimer, this, &ADPlayer::SavePlayerData, 0.1f, true);
 }
 
 void ADPlayer::PlayerDead()
@@ -133,6 +129,21 @@ void ADPlayer::StopRunning()
 {
 	CurrentCharacterSpeed = CharacterWalkSpeed;
 	ChangeSpeedValue(CurrentCharacterSpeed);
+}
+
+void ADPlayer::SavePlayerData()
+{
+	UGameInstance* GameInstance = GetGameInstance();
+	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+	if(MyGameInstance)
+	{
+
+		APlayerController* PlayerController = GetController<APlayerController>();
+		
+		MyGameInstance->PlayerCurrentPosition = GetActorLocation();
+		MyGameInstance->PlayerCurrentRotation =  PlayerController->GetControlRotation();
+		MyGameInstance->PlayerCurrentSpeed =  CharacterMovementComp->GetMaxSpeed();
+	}
 }
 
 void ADPlayer::ChangeSpeedValue(float SpeedValue) const
