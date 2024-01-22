@@ -33,6 +33,7 @@ void ADPlayer::BeginPlay()
 	CurrentCharacterSpeed = CharacterWalkSpeed;
 	CharacterMovementComp->MaxWalkSpeed = CurrentCharacterSpeed;
 	GetWorldTimerManager().SetTimer(PlayerDataSavingTimer, this, &ADPlayer::SavePlayerData, 0.1f, true);
+	
 }
 
 void ADPlayer::PlayerDead()
@@ -142,6 +143,7 @@ void ADPlayer::SavePlayerData()
 		MyGameInstance->PlayerCurrentPosition = GetActorLocation();
 		MyGameInstance->PlayerCurrentRotation =  PlayerController->GetControlRotation();
 		MyGameInstance->PlayerCurrentSpeed =  CharacterMovementComp->GetMaxSpeed();
+		MyGameInstance->PlayerCurrentVelocity = GetVelocity();
 	}
 }
 

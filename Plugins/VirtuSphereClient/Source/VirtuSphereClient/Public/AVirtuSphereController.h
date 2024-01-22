@@ -34,7 +34,6 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Connect to VirtuSphere", Keywords = "VirtuSphereClient connect"), Category = "VirtuSphereClient")

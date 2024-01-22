@@ -45,6 +45,9 @@ public:
 	FVector PlayerCurrentPosition;
 
 	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
+	FVector PlayerCurrentVelocity;
+
+	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
 	FRotator PlayerCurrentRotation;
 
 	UPROPERTY(BlueprintReadWrite, Category="Player Stats")

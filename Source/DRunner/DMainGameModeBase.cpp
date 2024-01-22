@@ -78,7 +78,6 @@ void ADMainGameModeBase::StartPlay()
 				}
 
 				EGamePlatformType PlatformType = CheckPlatformType(Pixel[0]);
-				//UE_LOG(LogTemp, Warning, TEXT("Pixel r: %d g: %d b: %d"), Pixel[0], Pixel[1], Pixel[2]);
 				if (PlatformType == EGamePlatformType::None)
 				{
 					IsValid = false;

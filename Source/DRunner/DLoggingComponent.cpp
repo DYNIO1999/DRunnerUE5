@@ -12,7 +12,7 @@ UDLoggingComponent::UDLoggingComponent()
 void UDLoggingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	UTestFunctions::DeleteFileIfExists(FString("LoggedData"));
 }
 
 void UDLoggingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -33,20 +33,22 @@ void UDLoggingComponent::SaveLoggedData(
 
 	if(DGameInstance)
 	{
-
-		for(int i =0; i< 4; i++)
+		if(DGameInstance->CurrentMotorStateEvent.Num() >=4)
 		{
-			const FString ContentToBeSaved =
-				UTestFunctions::PreProcessLogData(
-					CurrentTimeAsString,
-					CurrentPlatformType,
-					CurrentPlatformDirection,
-					CurrentPlatformMovementType,
-					DGameInstance->PlayerCurrentSpeed,
-					DGameInstance->PlayerCurrentPosition,
-					DGameInstance->PlayerCurrentRotation,
-					DGameInstance->CurrentMotorStateEvent[i]);	
+			for(int i =0; i< 4; i++)
+			{
+				const FString ContentToBeSaved =
+					UTestFunctions::PreProcessLogData(
+						CurrentTimeAsString,
+						CurrentPlatformType,
+						CurrentPlatformDirection,
+						CurrentPlatformMovementType,
+						DGameInstance->PlayerCurrentSpeed,
+						DGameInstance->PlayerCurrentPosition,
+						DGameInstance->PlayerCurrentRotation,
+						DGameInstance->CurrentMotorStateEvent[i]);	
 				UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);		
+			}
 		}
 	}
 }

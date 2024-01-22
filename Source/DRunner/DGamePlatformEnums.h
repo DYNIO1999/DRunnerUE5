@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//Platforms NONE (BLACK) = (NONE, NONE, NONE) (0, 0, 0)
 
 UENUM(BlueprintType) 
 enum class EGamePlatformType : uint8

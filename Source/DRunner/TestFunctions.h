@@ -55,7 +55,6 @@ public:
 	static void SaveContentToFile(const FString& FileName, const FString& FileContent);
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
-
 	static FString PreProcessLogData(
 		const FString& CurrentTime,
 	const int PlatformType,
@@ -65,4 +64,7 @@ public:
 	const FVector& PlayerPosition,
 	const FRotator& PlayerRotation,
 	const FMotorStateEvent& MotorStates);
+
+	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
+    	static void DeleteFileIfExists(const FString& FileName);
 };

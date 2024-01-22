@@ -13,5 +13,6 @@ UDGameInstance::UDGameInstance()
 	PlayerCurrentRotation = {};
 	PlayerCurrentSpeed = 0.0f;
 	SpherePoseEvent = {};
+	PlayerCurrentVelocity = {};
 	
 }

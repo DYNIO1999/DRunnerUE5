@@ -72,10 +72,7 @@ void UTestFunctions::SaveContentToFile(const FString& FileName, const FString& F
 	const FString ProjectDirectory = FPaths::ProjectDir();
 	const  FString LoggingDirName{"LoggedInfo"};
 	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".csv")));
-
-	UE_LOG(LogTemp, Warning, TEXT("FormattedFileContent:%s"), *PathToFile);
-	UE_LOG(LogTemp, Warning, TEXT("FormattedFileContent:%s"), *FileContent);
-	bool Result = FFileHelper::SaveStringToFile(FileContent, *PathToFile,FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+	FFileHelper::SaveStringToFile(FileContent, *PathToFile,FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 }
 
 FString UTestFunctions::PreProcessLogData(
@@ -109,4 +106,20 @@ FString UTestFunctions::PreProcessLogData(
 		MotorState.motorCurrent);
 
 	return RowToSave;
+}
+
+void UTestFunctions::DeleteFileIfExists(const FString& FileName)
+{
+	const FString ProjectDirectory = FPaths::ProjectDir();
+	const  FString LoggingDirName{"LoggedInfo"};
+	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".csv")));
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+	// Check if the file exists
+	if (PlatformFile.FileExists(*PathToFile))
+	{
+		if(PlatformFile.DeleteFile(*PathToFile))
+			UE_LOG(LogTemp, Error, TEXT("File Deleted:%s"), *PathToFile);
+	}
 }
