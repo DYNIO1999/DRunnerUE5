@@ -61,9 +61,13 @@ public:
 	const int PlatformDirection,
 	const int PlatformMovementType,
 	const float PlayerSpeed,
+	const FVector& PlayerVelocity,
 	const FVector& PlayerPosition,
 	const FRotator& PlayerRotation,
 	const FMotorStateEvent& MotorStates);
+
+	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
+	static FString CreateColumnNames();
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
     	static void DeleteFileIfExists(const FString& FileName);
