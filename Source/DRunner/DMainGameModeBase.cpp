@@ -24,6 +24,10 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 		MyGameInstance->ImageLevelInfo = ImageLevelData;
 		
 	}
+	
+	UTestFunctions::DeleteFileIfExists(FString("LoggedData"));
+    const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
+	UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
 }
 
 void ADMainGameModeBase::StartPlay()

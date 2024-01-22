@@ -12,9 +12,6 @@ UDLoggingComponent::UDLoggingComponent()
 void UDLoggingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	UTestFunctions::DeleteFileIfExists(FString("LoggedData"));
-	const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
-	UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);		
 }
 
 void UDLoggingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

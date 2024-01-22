@@ -33,7 +33,14 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	virtual void OnConnected_Implementation();
+	virtual void OnDisconnected_Implementation();
+	virtual void OnSpherePose_Implementation(FSpherePoseEvent event);
+	virtual void OnControllerState_Implementation(FControllerStateEvent event);
+	virtual void OnMotorState_Implementation(FMotorStateEvent event);
+
 public:	
+	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Connect to VirtuSphere", Keywords = "VirtuSphereClient connect"), Category = "VirtuSphereClient")
@@ -49,30 +56,30 @@ public:
 	float GetCurrentPing();
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Request SpherePose events", Keywords = "VirtuSphereClient pose"), Category = "VirtuSphereClient")
-	void RequestSpherePoseUpdates(int sendRate = 20);
+	void RequestSpherePoseUpdates(int sendRate = 10);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Request ControllerState events", Keywords = "VirtuSphereClient controller state"), Category = "VirtuSphereClient")
-	void RequestControllerStateUpdates(int sendRate = 20);
+	void RequestControllerStateUpdates(int sendRate = 10);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Request MotorState events", Keywords = "VirtuSphereClient motor state"), Category = "VirtuSphereClient")
-	void RequestMotorStateUpdates(int sendRate = 20);
+	void RequestMotorStateUpdates(int sendRate = 10);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set sphere pose", Keywords = "VirtuSphereClient set pose"), Category = "VirtuSphereClient")
 	void SetSpherePose(float velocity, float direction);
 
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "VirtuSphereClient")
+	UFUNCTION(BlueprintNativeEvent, Category = "VirtuSphereClient")
 	void OnConnected();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "VirtuSphereClient")
+	UFUNCTION(BlueprintNativeEvent, Category = "VirtuSphereClient")
 	void OnDisconnected();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "VirtuSphereClient")
+	UFUNCTION(BlueprintNativeEvent, Category = "VirtuSphereClient")
 	void OnSpherePose(FSpherePoseEvent event);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "VirtuSphereClient")
+	UFUNCTION(BlueprintNativeEvent, Category = "VirtuSphereClient")
 	void OnControllerState(FControllerStateEvent event);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "VirtuSphereClient")
+	UFUNCTION(BlueprintNativeEvent, Category = "VirtuSphereClient")
 	void OnMotorState(FMotorStateEvent event);
 };
