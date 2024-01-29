@@ -26,7 +26,7 @@ void UDLoggingComponent::SaveLoggedData(
 	int CurrentPlatformMovementType)
 {
 	const FDateTime Now = FDateTime::Now();
-	const FString CurrentTimeAsString = Now.ToString();
+	const FString CurrentTimeAsString = Now.ToString(TEXT("%S-%s"));
 	
 	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
