@@ -14,5 +14,6 @@ UDGameInstance::UDGameInstance()
 	PlayerCurrentSpeed = 0.0f;
 	SpherePoseEvent = {};
 	PlayerCurrentVelocity = {};
-	
+
+	SavedMotorStatesEvents={};
 }

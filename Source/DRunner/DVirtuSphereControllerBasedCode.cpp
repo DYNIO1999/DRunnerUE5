@@ -2,6 +2,7 @@
 
 
 #include "DVirtuSphereControllerBasedCode.h"
+#include "DGameInstance.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
@@ -26,10 +27,29 @@ void ADVirtuSphereControllerBasedCode::OnSpherePose_Implementation(FSpherePoseEv
 }
 
 void ADVirtuSphereControllerBasedCode::OnControllerState_Implementation(FControllerStateEvent event){
+
 }
 void ADVirtuSphereControllerBasedCode::OnMotorState_Implementation(FMotorStateEvent event)
 {
-	UE_LOG(LogTemp, Error, TEXT("TimeStamp %lld"), event.timestamp);
+	//UE_LOG(LogTemp, Error, TEXT("TimeStamp %lld"), event.timestamp);
+
+	UGameInstance* GameInstance = GetGameInstance();
+	
+	UDGameInstance* DRunnerGameInstance = Cast<UDGameInstance>(GameInstance);
+
+	if (DRunnerGameInstance)
+	{
+		auto& MotorStateEvents = DRunnerGameInstance->SavedMotorStatesEvents;
+		const int64 CurrentTimeStamp = event.timestamp;
+		if(MotorStateEvents.Contains(CurrentTimeStamp))
+		{
+			auto& Value = MotorStateEvents[CurrentTimeStamp];
+			Value.Add(event);
+		}else
+		{
+			MotorStateEvents.Add(CurrentTimeStamp, {event});	
+		}
+	}
 }
 
 

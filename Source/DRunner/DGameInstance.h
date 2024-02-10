@@ -7,7 +7,6 @@
 #include "DGameInstance.generated.h"
 
 
-
 UCLASS()
 class DRUNNER_API UDGameInstance : public UGameInstance
 {
@@ -55,4 +54,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
 	FVector SpherePoseEvent;
+	
+	TMap<int64, TArray<FMotorStateEvent>> SavedMotorStatesEvents;
 };

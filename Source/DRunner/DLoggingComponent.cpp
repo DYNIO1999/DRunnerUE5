@@ -25,20 +25,27 @@ void UDLoggingComponent::SaveLoggedData(
 	int CurrentPlatformDirection,
 	int CurrentPlatformMovementType)
 {
-	const FDateTime Now = FDateTime::Now();
-	const FString CurrentTimeAsString = Now.ToString(TEXT("%S-%s"));
+	const double Now = GetWorld()->GetTimeSeconds();
 	
 	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	if(DGameInstance)
 	{
-		if(DGameInstance->CurrentMotorStateEvent.Num() >=4)
+		auto& SavedMotorStates = DGameInstance->SavedMotorStatesEvents;
+		if (SavedMotorStates.Num() >= 10)
 		{
-			for(int i =0; i< 4; i++)
+			TArray<int64> Keys;
+			SavedMotorStates.GetKeys(Keys);
+			Keys.Sort();
+			
+			for(const auto Key: Keys)
 			{
-				const FString ContentToBeSaved =
-					UTestFunctions::PreProcessLogData(
-						CurrentTimeAsString,
+				
+				for(int i =0; i<SavedMotorStates[Key].Num();i++)
+				{
+					const FString ContentToBeSaved =
+						UTestFunctions::PreProcessLogData(
+						Now,
 						CurrentPlatformType,
 						CurrentPlatformDirection,
 						CurrentPlatformMovementType,
@@ -46,9 +53,12 @@ void UDLoggingComponent::SaveLoggedData(
 						DGameInstance->PlayerCurrentVelocity,
 						DGameInstance->PlayerCurrentPosition,
 						DGameInstance->PlayerCurrentRotation,
-						DGameInstance->CurrentMotorStateEvent[i]);	
-				UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);		
+						SavedMotorStates[Key][i]);
+					
+					UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);	
+				}
 			}
+			SavedMotorStates.Reset();
 		}
 	}
 }

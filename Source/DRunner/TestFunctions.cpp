@@ -76,7 +76,7 @@ void UTestFunctions::SaveContentToFile(const FString& FileName, const FString& F
 }
 
 FString UTestFunctions::PreProcessLogData(
-	const FString& CurrentTime,
+	const float CurrentTime,
 	const int PlatformType,
 	const int PlatformDirection,
 	const int PlatformMovementType,
@@ -86,7 +86,8 @@ FString UTestFunctions::PreProcessLogData(
 	const FRotator& PlayerRotation,
 	const FMotorStateEvent& MotorState)
 {
-	FString RowToSave = FString::Printf(TEXT("%s,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f\n"), *CurrentTime,
+	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f\n"),
+		CurrentTime,
 		PlatformType,
 		PlatformDirection,
 		PlatformMovementType,

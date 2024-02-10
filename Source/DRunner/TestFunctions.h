@@ -56,7 +56,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
 	static FString PreProcessLogData(
-		const FString& CurrentTime,
+	const float CurrentTime,
 	const int PlatformType,
 	const int PlatformDirection,
 	const int PlatformMovementType,
