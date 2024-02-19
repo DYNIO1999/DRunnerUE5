@@ -11,6 +11,7 @@ void ADVirtuSphereControllerBasedCode::BeginPlay(){
 void ADVirtuSphereControllerBasedCode::EndPlay(const EEndPlayReason::Type EndPlayReason){
 	Super::EndPlay(EndPlayReason);
 	Disconnect();
+	SetMotorPower(false);
 }
 
 void ADVirtuSphereControllerBasedCode::OnConnected_Implementation(){
@@ -24,7 +25,7 @@ void ADVirtuSphereControllerBasedCode::OnDisconnected_Implementation(){
 }
 void ADVirtuSphereControllerBasedCode::OnSpherePose_Implementation(FSpherePoseEvent event){
 	CurrentPoseEvent =  event;
-	UE_LOG(LogTemp, Error, TEXT("VELOCITY %f"), CurrentPoseEvent.velocity);
+	//UE_LOG(LogTemp, Error, TEXT("VELOCITY %f"), CurrentPoseEvent.velocity);
 }
 
 void ADVirtuSphereControllerBasedCode::OnControllerState_Implementation(FControllerStateEvent event){
@@ -86,7 +87,6 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	}
 
 	if((DGameInstance->CurrentPlatformType !=  EGamePlatformType::Descending) && !CanDescend){
-		UE_LOG(LogTemp, Error, TEXT("REMOVING TIMER DESCENDING"));
 		CanDescend = true;
 		if(GetWorld()->GetTimerManager().IsTimerActive(DescendDelay))
 		{
@@ -101,10 +101,8 @@ void ADVirtuSphereControllerBasedCode::PerformAscending()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
-	if (VelocityAsScalar > MinimalVelocity)
-	{
-		SetSpherePose(VelocityAsScalar - 0.5f, Direction);
-	}
+	float Result = FMath::Max(VelocityAsScalar - 0.1f, 0.0);
+	SetSpherePose(Result, Direction);	
 }
 
 void ADVirtuSphereControllerBasedCode::PerformDescending()
@@ -112,8 +110,6 @@ void ADVirtuSphereControllerBasedCode::PerformDescending()
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
 	// 6 m/s
-	if (VelocityAsScalar<MaximumVelocity)
-	{
-		SetSpherePose(VelocityAsScalar + 0.5f, Direction);	
-	}
+	float Result = FMath::Max(VelocityAsScalar + 0.1f, 6.0);
+	SetSpherePose(Result, Direction);	
 }
