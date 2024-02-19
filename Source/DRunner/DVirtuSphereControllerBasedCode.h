@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AVirtuSphereController.h"
+#include "DGameInstance.h"
 #include "DVirtuSphereControllerBasedCode.generated.h"
 
 UCLASS()
@@ -12,7 +13,6 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	virtual void BeginPlay() override;
     
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-    
     virtual void OnConnected_Implementation() override;
     virtual void OnDisconnected_Implementation()  override;
     virtual void OnSpherePose_Implementation(FSpherePoseEvent event) override;
@@ -21,4 +21,27 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 
 	public:
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(BlueprintReadWrite)
+	UDGameInstance* DGameInstance;
+	
+	UPROPERTY(BlueprintReadWrite)
+	FSpherePoseEvent CurrentPoseEvent;
+
+	UPROPERTY(BlueprintReadWrite, Category="Speed Ascending And Descending")
+	float SpeedAscendingAndDescending{0.1};
+	
+	private:
+	FTimerHandle AscendDelay;
+	bool CanAscend{true};
+
+	FTimerHandle DescendDelay;
+	bool CanDescend{true};
+	
+	void PerformAscending();
+	void PerformDescending();
+
+	
+	float MinimalVelocity =0.0f;
+	float MaximumVelocity = 6.0f;
 };

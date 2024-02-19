@@ -1,4 +1,6 @@
 #include "DStandardPlatform.h"
+
+#include "DGameInstance.h"
 #include "DSpawnCoinComp.h"
 #include "Components/SphereComponent.h"
 #include "DLoggingComponent.h"
@@ -62,8 +64,10 @@ void ADStandardPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 {
 	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase))
 	{
-		//UE_LOG(LogTemp, Error, TEXT("STARTED COLLIDING"));
 		CanProduceLog =  true;
+		UDGameInstance* DGameInstance = Cast<UDGameInstance>(GetGameInstance());
+		
+		DGameInstance->CurrentPlatformType = PlatformType;
 		GetWorldTimerManager().SetTimer(MyTimerHandle, this, &ADStandardPlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}
 }
@@ -82,7 +86,6 @@ void ADStandardPlatform::ProduceLog()
 {
 	if(CanProduceLog)
 	{
-		//get player location?
 		LogComponent->SaveLoggedData(
 			static_cast<int>(PlatformType),
 			static_cast<int>(PlatformDirection),

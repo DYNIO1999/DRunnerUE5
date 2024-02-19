@@ -28,7 +28,7 @@ void UDLoggingComponent::SaveLoggedData(
 	const double Now = GetWorld()->GetTimeSeconds();
 	
 	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
+	
 	if(DGameInstance)
 	{
 		auto& SavedMotorStates = DGameInstance->SavedMotorStatesEvents;

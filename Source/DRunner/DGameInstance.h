@@ -4,6 +4,7 @@
 #include "Engine/GameInstance.h"
 #include "TestFunctions.h"
 #include "VirtuSphereClient/Public/VirtuSphereClientStructs.h"
+#include "DGamePlatformEnums.h"
 #include "DGameInstance.generated.h"
 
 
@@ -56,4 +57,7 @@ public:
 	FVector SpherePoseEvent;
 	
 	TMap<int64, TArray<FMotorStateEvent>> SavedMotorStatesEvents;
+
+	UPROPERTY(BlueprintReadWrite)
+	EGamePlatformType CurrentPlatformType;
 };
