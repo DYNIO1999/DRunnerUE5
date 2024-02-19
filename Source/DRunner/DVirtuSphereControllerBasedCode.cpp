@@ -54,16 +54,22 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	if( (DGameInstance->CurrentPlatformType ==  EGamePlatformType::Ascending) && CanAscend)
 	{
 		GetWorld()->GetTimerManager().SetTimer(AscendDelay, this, &ADVirtuSphereControllerBasedCode::PerformAscending, 1.0f, true);
+
+		SetMotorPower(true);
+
+		PerformAscending();
+		
 		CanAscend = false;
 	}
 	
 	if((DGameInstance->CurrentPlatformType !=  EGamePlatformType::Ascending) && !CanAscend){
-		UE_LOG(LogTemp, Error, TEXT("REMOVING TIMER ASCENDING"));
 		CanAscend = true;
 		if(GetWorld()->GetTimerManager().IsTimerActive(AscendDelay))
 		{
 			GetWorld()->GetTimerManager().ClearTimer(AscendDelay);
 		}
+		SetMotorPower(false);
+
 	}
 
 
@@ -71,6 +77,11 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	if( (DGameInstance->CurrentPlatformType ==  EGamePlatformType::Descending) && CanDescend)
 	{
 		GetWorld()->GetTimerManager().SetTimer(DescendDelay, this, &ADVirtuSphereControllerBasedCode::PerformDescending, 1.0f, true);
+		
+		SetMotorPower(true);
+
+		PerformDescending();
+		
 		CanDescend = false;
 	}
 
@@ -81,6 +92,7 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		{
 			GetWorld()->GetTimerManager().ClearTimer(DescendDelay);
 		}
+		SetMotorPower(false);
 	}
 	
 }

@@ -67,6 +67,9 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set sphere pose", Keywords = "VirtuSphereClient set pose"), Category = "VirtuSphereClient")
 	void SetSpherePose(float velocity, float direction);
 
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set motor power", Keywords = "VirtuSphereClient set power"), Category = "VirtuSphereClient")
+	void SetMotorPower(bool enabled);
+
 
 	UFUNCTION(BlueprintNativeEvent, Category = "VirtuSphereClient")
 	void OnConnected();
