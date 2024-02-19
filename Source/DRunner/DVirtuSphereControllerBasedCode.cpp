@@ -101,7 +101,7 @@ void ADVirtuSphereControllerBasedCode::PerformAscending()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
-	float Result = FMath::Max(VelocityAsScalar - 0.1f, 0.0);
+	float Result = FMath::Max(VelocityAsScalar - 0.1f, 1.0);
 	SetSpherePose(Result, Direction);	
 }
 
@@ -110,6 +110,6 @@ void ADVirtuSphereControllerBasedCode::PerformDescending()
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
 	// 6 m/s
-	float Result = FMath::Min(VelocityAsScalar + 0.1f, 6.0);
+	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
 	SetSpherePose(Result, Direction);	
 }
