@@ -45,6 +45,10 @@
 		{
 			"Name": "VirtuSphereClient",
 			"Enabled": true
+		},
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

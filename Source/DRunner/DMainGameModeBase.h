@@ -30,6 +30,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
 	TSubclassOf<AActor> DescendingPlatform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> RopeBridgePlatformRef;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Image File Name")
 	FString ImageFileName;

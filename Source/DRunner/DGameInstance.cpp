@@ -2,7 +2,7 @@
 
 UDGameInstance::UDGameInstance()
 {
-	MaxPointsToGather = 0;
+	MaxPointsToGather = 10;
 	CurrentGatheredPoints = 0;
 	IsPlayerDead = false;
 

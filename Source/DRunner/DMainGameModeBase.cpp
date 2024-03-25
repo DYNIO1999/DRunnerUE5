@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DGameInstance.h"
 #include "DCoin.h"
+#include "DRopeBridgePlatform.h"
 #include "DStandardPlatform.h"
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -13,9 +14,9 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 	Super::InitGame(MapName, Options, ErrorMessage);
 	
 	UGameInstance* GameInstance = GetGameInstance();
-
+ 
 	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
-
+ 
 	const FUImageLevelData ImageLevelData = UTestFunctions::ReadImage(ImageFileName);
 	
 	if (MyGameInstance)
@@ -28,25 +29,26 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 	UTestFunctions::DeleteFileIfExists(FString("LoggedData"));
     const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
 	UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
-}
+	
+}	
 
 void ADMainGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 	
 	UGameInstance* GameInstance = GetGameInstance();
-
+	
 	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
 	
 	float PlayerStartYOffset = 0;
 	
-
+	
 	if (MyGameInstance)
 	{
 		
 		const int ImageWidth = MyGameInstance->ImageLevelInfo.ImageWidthSize;
 		const int BytesPerPixel = MyGameInstance->ImageLevelInfo.PixelSizeInBytes;
-
+	
 		const auto& ImageRawData = MyGameInstance->ImageLevelInfo.ImageData;
 		
 		int PixelCount = 0;
@@ -54,9 +56,10 @@ void ADMainGameModeBase::StartPlay()
 		float PlatformPosX = 0;
 		float PlatformPosY = 0;
 		float PlatformPosZ = 0;
-
+	
 		float PlatformConstantOffset = 1100;
-		
+
+		EGamePlatformType PreviousPlatformType = EGamePlatformType::None;
 		for (size_t i=0;i<ImageRawData.Num();i++)
 		{
 			
@@ -80,7 +83,7 @@ void ADMainGameModeBase::StartPlay()
 					Pixel.Push(ImageRawData[j]);
 						
 				}
-
+	
 				EGamePlatformType PlatformType = CheckPlatformType(Pixel[0]);
 				if (PlatformType == EGamePlatformType::None)
 				{
@@ -91,7 +94,7 @@ void ADMainGameModeBase::StartPlay()
 				if (IsValid)
 				{
 					FVector PlatformVectorPos= FVector(PlatformPosX, PlatformPosY, PlatformPosZ);
-
+	
 					EGamePlatformDirection PlatformDirection = CheckPlatformDirection(Pixel[1]);
 					EGamePlatformMovementType PlatformMovement = CheckPlatformMovementType(Pixel[2]);
 					
@@ -100,35 +103,42 @@ void ADMainGameModeBase::StartPlay()
 						PlayerStartYOffset = PlatformPosY;	
 					}
 					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(PlatformType, PlatformDirection, PlatformMovement);
+
 					
 					if (GetWorld())
 					{
 						FActorSpawnParameters SpawnParams;
 						SpawnParams.Owner = this;
-
+	
 						
 						float angleYaw  = GetAngleBasedOnPlatformDirection(PlatformDirection);
 						FRotator SpawnRotation = FRotator(0.0f, angleYaw, 0.0f);
 						
+						if (PlatformType == EGamePlatformType::RopeBridgePlatform) {
+							//just in case
+							PlatformVectorPos = PlatformVectorPos + FVector(0.0, 0.0, 70.0f);
+						}
 						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
-				
-						ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
-
-
-
-						StandardPlatform->InitializePlatform(PlatformType, PlatformDirection,PlatformMovement);
 						
+						if (PlatformType == EGamePlatformType::RopeBridgePlatform) {
+							ADRopeBridgePlatform* RopeBridgePlatformPtr = Cast<ADRopeBridgePlatform>(SpawnedActor);
+							RopeBridgePlatformPtr->InitializePlatform(PlatformType, PlatformDirection, PlatformMovement);
+						}
+						else {
+							ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
+							StandardPlatform->InitializePlatform(PlatformType, PlatformDirection, PlatformMovement);
+						}
 					}
 				}
-
+	
 				
 				PlatformPosX+=PlatformConstantOffset;
 				PixelCount++;
 			}
 		}
 	}
-
-		
+	
+	
 	TArray<AActor*> FoundCoins;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
 	MaxCoinsOnLevel= FoundCoins.Num();
@@ -171,6 +181,11 @@ TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformTy
 	if(PlatformTypePar == EGamePlatformType::Descending)
 	{
 		return DescendingPlatform;
+	}
+
+	if (PlatformTypePar == EGamePlatformType::RopeBridgePlatform)
+	{
+		return RopeBridgePlatformRef;
 	}
 	
 	return ForwardStandardPlatform;
