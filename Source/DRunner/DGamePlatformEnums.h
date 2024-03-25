@@ -10,7 +10,8 @@ enum class EGamePlatformType : uint8
 	Ascending = 10 UMETA(DisplayName = "Ascending"),
 	Descending = 20 UMETA(DisplayName = "Descending"),
 	RightPlatform =  30 UMETA(DisplayName = "RightPlatform"),
-	LeftPlatform = 40 UMETA(DisplayName = "LeftPlatform")
+	LeftPlatform = 40 UMETA(DisplayName = "LeftPlatform"),
+	RopeBridgePlatform = 50 UMETA(DisplayName = "RopeBridgePlatform")
 };
 
 UENUM(BlueprintType) 
@@ -57,6 +58,9 @@ static EGamePlatformType CheckPlatformType(const uint8 Value)
 
 	case static_cast<int>(EGamePlatformType::RightPlatform):
 		PlatformTypeVal= EGamePlatformType::RightPlatform;
+		break;
+	case static_cast<int>(EGamePlatformType::RopeBridgePlatform):
+		PlatformTypeVal = EGamePlatformType::RopeBridgePlatform;
 		break;
 
 	default:

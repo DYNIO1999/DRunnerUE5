@@ -16,9 +16,9 @@ ADCoin::ADCoin()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComp->SetupAttachment(RootComponent);
-	
+
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 }
 
 // Called when the game starts or when spawned
@@ -38,16 +38,18 @@ void ADCoin::Tick(float DeltaTime)
 
 void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+
 	if (OtherActor && OtherActor != this && OtherActor->IsA(ADPlayer::StaticClass()))
 	{
 		SendInfoGathered();
 		Destroy();
 	}
+
 }
 
 void ADCoin::SendInfoGathered() const
 {
 	OnEventGathered.Broadcast();
-}
 
+
+}
