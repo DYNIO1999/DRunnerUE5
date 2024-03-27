@@ -16,5 +16,7 @@ UDGameInstance::UDGameInstance()
 	PlayerCurrentVelocity = {};
 
 	SavedMotorStatesEvents={};
+	CurrentWindDirection=FVector::Zero();
+	
 	CurrentPlatformType = EGamePlatformType::None;
 }

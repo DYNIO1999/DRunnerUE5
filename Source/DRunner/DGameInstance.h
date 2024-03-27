@@ -60,4 +60,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	EGamePlatformType CurrentPlatformType;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector CurrentWindDirection;
 };

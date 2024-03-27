@@ -2,7 +2,8 @@
 #include "CableComponent.h"
 #include "Components/SphereComponent.h"
 #include "DLoggingComponent.h"
-#include "DGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+
 
 ADRopeBridgePlatform::ADRopeBridgePlatform()
 {
@@ -51,11 +52,19 @@ void ADRopeBridgePlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MeshToCheckCollision->OnComponentBeginOverlap.AddDynamic(this, &ADRopeBridgePlatform::OnOverlapBegin);
-	MeshToCheckCollision->OnComponentEndOverlap.AddDynamic(this, &ADRopeBridgePlatform::OnOverlapEnd);
+	
 	CanProduceLog = false;
 	LoggingDelayInSeconds =0.1f;
 
+
+	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if(DGameInstance)
+	{
+		GameInstanceRef = DGameInstance;
+		GameInstanceRef->CurrentWindDirection = WindDirection;
+	}
+	
+	
 	GetWorld()->GetTimerManager().SetTimer(SwapRotationTimer, this, &ADRopeBridgePlatform::SwapRotation, RotationCooldown, true);
 	
 }
@@ -68,6 +77,8 @@ void ADRopeBridgePlatform::Tick(float DeltaTime)
 		const FVector CurrentVelocity = WindDirection* WindSpeed *DeltaTime;
 		Plank->SetRelativeRotation(Plank->GetRelativeRotation()+FRotator(CurrentVelocity.Y, CurrentVelocity.Z, CurrentVelocity.X));
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("WIND %f %f %f"), WindDirection.X, WindDirection.Y, WindDirection.Z);
 	
 }
 
@@ -119,6 +130,8 @@ void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
 			LastHeight +=HeightOffset;
 		}
 		BridgePlanksMeshComponents[i]->SetRelativeLocation(FVector(i * SpaceBetweenPlanks - HalfDistance, CurrentPosition.Y, LastHeight));
+		BridgePlanksMeshComponents[i]->OnComponentBeginOverlap.AddDynamic(this, &ADRopeBridgePlatform::OnOverlapBegin);
+		BridgePlanksMeshComponents[i]->OnComponentEndOverlap.AddDynamic(this, &ADRopeBridgePlatform::OnOverlapEnd);
 	}
 
 
@@ -165,20 +178,20 @@ void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
 void ADRopeBridgePlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
 	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase))
 	{
-		CanProduceLog =  true;
-		UDGameInstance* DGameInstance = Cast<UDGameInstance>(GetGameInstance());
-		
-		DGameInstance->CurrentPlatformType = PlatformType;
-		GetWorldTimerManager().SetTimer(LoggingCooldown, this, &ADRopeBridgePlatform::ProduceLog, LoggingDelayInSeconds, true);
+		UE_LOG(LogTemp, Error, TEXT("Overlapping begin"));
+		CanProduceLog =  false;
+		GetWorldTimerManager().ClearTimer(LoggingCooldown);
 	}
+	
 }
 
 void ADRopeBridgePlatform::SwapRotation()
 {
 	WindDirection*=-1.0f;
+	GameInstanceRef->CurrentWindDirection = WindDirection;
+
 }
 
 void ADRopeBridgePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -186,9 +199,11 @@ void ADRopeBridgePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 {
 	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Overlapping begin"));
-		CanProduceLog =  false;
-		GetWorldTimerManager().ClearTimer(LoggingCooldown);
+		CanProduceLog =  true;
+		UDGameInstance* DGameInstance = Cast<UDGameInstance>(GetGameInstance());
+		
+		DGameInstance->CurrentPlatformType = PlatformType;
+		GetWorldTimerManager().SetTimer(LoggingCooldown, this, &ADRopeBridgePlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}
 }
 

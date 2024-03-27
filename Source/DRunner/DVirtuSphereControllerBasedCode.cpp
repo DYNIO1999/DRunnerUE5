@@ -1,10 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "DVirtuSphereControllerBasedCode.h"
+#include "DRunnerLog.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
+
 	DGameInstance = Cast<UDGameInstance>(GetGameInstance());
+	IsMotorPowerEnabled = false;
+	IsUsingUpAndDowMotor = false;
+	IsOnRopeBridge = false;
+
 	Connect();
 }
     
@@ -51,13 +55,14 @@ void ADVirtuSphereControllerBasedCode::OnMotorState_Implementation(FMotorStateEv
 
 void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
+
+	WindDirection = DGameInstance->CurrentWindDirection;
 	
 	if( (DGameInstance->CurrentPlatformType ==  EGamePlatformType::Ascending) && CanAscend)
 	{
 		GetWorld()->GetTimerManager().SetTimer(AscendDelay, this, &ADVirtuSphereControllerBasedCode::PerformAscending, 1.0f, true);
 
 		SetMotorPower(true);
-
 		PerformAscending();
 		
 		CanAscend = false;
@@ -70,7 +75,6 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 			GetWorld()->GetTimerManager().ClearTimer(AscendDelay);
 		}
 		SetMotorPower(false);
-
 	}
 
 
@@ -94,7 +98,39 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		}
 		SetMotorPower(false);
 	}
+
 	
+	if(DGameInstance->CurrentPlatformType == EGamePlatformType::RopeBridgePlatform && !IsOnRopeBridge)
+	{
+		GetWorld()->GetTimerManager().SetTimer(WindSwingTimer, this, &ADVirtuSphereControllerBasedCode::PerformSwing, SwingCooldown, true);
+		SetMotorPower(true);
+
+		IsOnRopeBridge = true;
+		
+		PerformSwing();
+		
+		UE_LOG(DRUNNER, Error, TEXT("SET EVENT"));
+	}
+
+	if((DGameInstance->CurrentPlatformType !=  EGamePlatformType::RopeBridgePlatform) && IsOnRopeBridge){
+		if(GetWorld()->GetTimerManager().IsTimerActive(WindSwingTimer))
+		{
+			GetWorld()->GetTimerManager().ClearTimer(WindSwingTimer);
+		}
+
+		//Is it necessary??
+		const float VelocityAsScalar = CurrentPoseEvent.velocity;
+		SetSpherePose(VelocityAsScalar, 0.0f);
+		//?
+
+		
+		SetMotorPower(false);
+
+		IsOnRopeBridge = false;
+		
+		
+		UE_LOG(DRUNNER, Error, TEXT("UNSET EVENT"));
+	}
 }
 
 void ADVirtuSphereControllerBasedCode::PerformAscending()
@@ -112,4 +148,12 @@ void ADVirtuSphereControllerBasedCode::PerformDescending()
 	// 6 m/s
 	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
 	SetSpherePose(Result, Direction);	
+}
+
+void ADVirtuSphereControllerBasedCode::PerformSwing()
+{
+	const float VelocityAsScalar = CurrentPoseEvent.velocity;
+	float Result = FMath::Min(VelocityAsScalar + 0.5f, 2.0);
+
+	SetSpherePose(Result, 15.0f*WindDirection.X);
 }

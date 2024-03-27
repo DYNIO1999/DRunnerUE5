@@ -4,12 +4,14 @@
 #include "GameFramework/Actor.h"
 #include "DGamePlatformEnums.h"
 #include "Materials/MaterialInterface.h"
+#include "DGameInstance.h"
 #include "DRopeBridgePlatform.generated.h"
 
 class UStaticMeshComponent;
 class UCableComponent;
 class USphereComponent;
 class UDLoggingComponent;
+
 
 UCLASS()
 class DRUNNER_API ADRopeBridgePlatform : public AActor
@@ -113,4 +115,7 @@ public:
 
 	UFUNCTION()
 	void SwapRotation();
+
+	UPROPERTY()
+	UDGameInstance* GameInstanceRef;
 };
