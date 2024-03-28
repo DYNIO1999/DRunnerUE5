@@ -112,8 +112,10 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		
 		Angle = AngleToInt*10.0f;
 		
-		GetWorld()->GetTimerManager().SetTimer(WindSwingTimer, this, &ADVirtuSphereControllerBasedCode::PerformSwing, SwingCooldown, true);
 		SetMotorPower(true);
+		PerformSwing();
+
+		GetWorld()->GetTimerManager().SetTimer(WindSwingTimer, this, &ADVirtuSphereControllerBasedCode::PerformSwing, SwingCooldown, true);
 
 		//UE_LOG(LogTemp, Error, TEXT("STARTED"));
 
@@ -127,10 +129,13 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		{
 			GetWorld()->GetTimerManager().ClearTimer(WindSwingTimer);
 		}
-		
 
-		const float VelocityAsScalar = CurrentPoseEvent.velocity;
-		SetSpherePose(VelocityAsScalar, 0.0f);
+		if(IsRunningDebug)
+		{
+			const float VelocityAsScalar = CurrentPoseEvent.velocity;
+			SetSpherePose(VelocityAsScalar, 0.0f);
+		}
+
 		
 		//UE_LOG(LogTemp, Error, TEXT("STOPPED"));
 		
