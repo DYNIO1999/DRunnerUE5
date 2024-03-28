@@ -1,5 +1,4 @@
 #include "DVirtuSphereControllerBasedCode.h"
-#include "DRunnerLog.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
@@ -102,34 +101,43 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	
 	if(DGameInstance->CurrentPlatformType == EGamePlatformType::RopeBridgePlatform && !IsOnRopeBridge)
 	{
+
+		FVector PlayerVelocityNormalized = DGameInstance->PlayerCurrentVelocity.GetSafeNormal();
+		FRotator Rotation = PlayerVelocityNormalized.Rotation();
+		int AngleToInt = 0;
+		if(Rotation.Yaw!=0.0f)
+		{
+			AngleToInt = Rotation.Yaw / 10.0f;	
+		}
+		
+		Angle = AngleToInt*10.0f;
+		
 		GetWorld()->GetTimerManager().SetTimer(WindSwingTimer, this, &ADVirtuSphereControllerBasedCode::PerformSwing, SwingCooldown, true);
 		SetMotorPower(true);
 
+		//UE_LOG(LogTemp, Error, TEXT("STARTED"));
+
 		IsOnRopeBridge = true;
 		
-		PerformSwing();
-		
-		UE_LOG(DRUNNER, Error, TEXT("SET EVENT"));
 	}
 
-	if((DGameInstance->CurrentPlatformType !=  EGamePlatformType::RopeBridgePlatform) && IsOnRopeBridge){
+	if(DGameInstance->CurrentPlatformType !=  EGamePlatformType::RopeBridgePlatform && IsOnRopeBridge){
+		
 		if(GetWorld()->GetTimerManager().IsTimerActive(WindSwingTimer))
 		{
 			GetWorld()->GetTimerManager().ClearTimer(WindSwingTimer);
 		}
+		
 
-		//Is it necessary??
 		const float VelocityAsScalar = CurrentPoseEvent.velocity;
 		SetSpherePose(VelocityAsScalar, 0.0f);
-		//?
-
 		
+		//UE_LOG(LogTemp, Error, TEXT("STOPPED"));
+		
+		
+		Angle = 0.0f;
 		SetMotorPower(false);
-
 		IsOnRopeBridge = false;
-		
-		
-		UE_LOG(DRUNNER, Error, TEXT("UNSET EVENT"));
 	}
 }
 
@@ -153,7 +161,8 @@ void ADVirtuSphereControllerBasedCode::PerformDescending()
 void ADVirtuSphereControllerBasedCode::PerformSwing()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
-	float Result = FMath::Min(VelocityAsScalar + 0.5f, 2.0);
+	
 
-	SetSpherePose(Result, 15.0f*WindDirection.X);
+	float Result = FMath::Min(VelocityAsScalar + 0.5f, 1.0);
+	SetSpherePose(Result, Angle+30.0f*WindDirection.X);
 }

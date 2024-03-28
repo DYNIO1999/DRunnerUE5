@@ -116,7 +116,7 @@ void ADMainGameModeBase::StartPlay()
 						
 						if (PlatformType == EGamePlatformType::RopeBridgePlatform) {
 							//just in case
-							PlatformVectorPos = PlatformVectorPos + FVector(0.0, 0.0, 70.0f);
+							PlatformVectorPos = PlatformVectorPos + FVector(0.0, 0.0, 80.0f);
 						}
 						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
 						

@@ -136,7 +136,7 @@ void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
 
 
 	BridgeStart->SetRelativeLocation(FVector(BridgePlanksMeshComponents[0]->GetRelativeLocation().X-100.0f, CurrentPosition.Y, CurrentPosition.Z));
-
+	
 	
 	BridgeEnd->SetRelativeLocation(FVector(BridgePlanksMeshComponents.Last()->GetRelativeLocation().X+100.0f, CurrentPosition.Y, CurrentPosition.Z));
 

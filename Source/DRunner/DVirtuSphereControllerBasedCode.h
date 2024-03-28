@@ -24,7 +24,7 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
 	FVector WindDirection;
-
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
 	float Angle;
 	
