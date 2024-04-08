@@ -21,11 +21,9 @@ class DRUNNER_API ADPlayer : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ADPlayer();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
@@ -41,10 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "EventPlayerLost")
 	void PlayerDead();
 	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
@@ -121,15 +117,10 @@ public:
 private:
 	UPROPERTY()
 	float CurrentCharacterSpeed;
-
 	
 	UPROPERTY()
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComp;
-
-
+	
 	void ChangeSpeedValue(float SpeedValue) const;
-
 	
-	
-	//OnEventGathered.Broadcast();
 };
