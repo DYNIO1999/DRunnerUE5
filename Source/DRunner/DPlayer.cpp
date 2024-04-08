@@ -7,12 +7,12 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/AudioComponent.h"
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
-// Sets default values
+
 ADPlayer::ADPlayer()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
@@ -21,18 +21,37 @@ ADPlayer::ADPlayer()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+	
+	PlayerRightLegAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerRightLegAudio"));
+	PlayerRightLegAudio->SetupAttachment(RootComponent);
+
+	PlayerRightLegAudio->bAutoActivate = false;
+
+	PlayerLeftLegAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerLeftLegAudio"));
+	PlayerLeftLegAudio->SetupAttachment(RootComponent);
+
+	PlayerLeftLegAudio->bAutoActivate = false;
 }
 
 // Called when the game starts or when spawned
 void ADPlayer::BeginPlay()
 {
+	
 	Super::BeginPlay();
 
 	CharacterMovementComp = GetCharacterMovement<UCharacterMovementComponent>();
 	
 	CurrentCharacterSpeed = CharacterWalkSpeed;
 	CharacterMovementComp->MaxWalkSpeed = CurrentCharacterSpeed;
+	
+	UGameInstance* GameInstance = GetGameInstance();
+	DGameInstanceRef = Cast<UDGameInstance>(GameInstance);
+	
 	GetWorldTimerManager().SetTimer(PlayerDataSavingTimer, this, &ADPlayer::SavePlayerData, 0.1f, true);
+	
+	DGameInstanceRef ->ChangeLegCooldown = ChangeLegCooldown;
+	PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
+	GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
 	
 }
 
@@ -41,11 +60,30 @@ void ADPlayer::PlayerDead()
 	OnEventPlayerLost.Broadcast();
 }
 
-// Called every frame
 void ADPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (PreviousPlatformMovementType != DGameInstanceRef->CurrentPlatformMovementType)
+	{
+		
+		UE_LOG(LogTemp, Error, TEXT("TICK IN DPLAYER"));
+		if (DGameInstanceRef->CurrentPlatformMovementType == EGamePlatformMovementType::Running)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
+			ChangeLegCooldown = RunningLegCooldown;
+			DGameInstanceRef->ChangeLegCooldown = ChangeLegCooldown;	
+			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);		
 
+			
+		}else
+		{
+			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
+			ChangeLegCooldown = WalkingLegCooldown;
+			DGameInstanceRef->ChangeLegCooldown = ChangeLegCooldown;	
+			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
+		}
+		PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
+	}
 }
 
 // Called to bind functionality to input
@@ -133,17 +171,37 @@ void ADPlayer::StopRunning()
 
 void ADPlayer::SavePlayerData()
 {
-	UGameInstance* GameInstance = GetGameInstance();
-	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
-	if(MyGameInstance)
+	
+	if(DGameInstanceRef)
 	{
 
 		APlayerController* PlayerController = GetController<APlayerController>();
 		
-		MyGameInstance->PlayerCurrentPosition = GetActorLocation();
-		MyGameInstance->PlayerCurrentRotation =  PlayerController->GetControlRotation();
-		MyGameInstance->PlayerCurrentSpeed =  CharacterMovementComp->GetMaxSpeed();
-		MyGameInstance->PlayerCurrentVelocity = GetVelocity();
+		DGameInstanceRef->PlayerCurrentPosition = GetActorLocation();
+		DGameInstanceRef->PlayerCurrentRotation =  PlayerController->GetControlRotation();
+		DGameInstanceRef->PlayerCurrentSpeed =  CharacterMovementComp->GetMaxSpeed();
+		DGameInstanceRef->PlayerCurrentVelocity = GetVelocity();
+	}
+}
+
+void ADPlayer::ChangeLeg()
+{
+	if(DGameInstanceRef)
+	{
+		if (DGameInstanceRef->CurrentPlatformMovementType != EGamePlatformMovementType::SpawnPoint)
+		{
+			if (PlayerCurrentLeg == EGameUsedLeg::Left){
+
+				PlayerRightLegAudio->Play();
+				PlayerCurrentLeg = EGameUsedLeg::Right;
+			}
+			else
+			{
+				PlayerLeftLegAudio->Play();
+				PlayerCurrentLeg =EGameUsedLeg::Left;
+			}
+			DGameInstanceRef->CurrentPlayerLeg = PlayerCurrentLeg;
+		}
 	}
 }
 

@@ -28,9 +28,6 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
 	float Angle;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
-	float  SwingCooldown;
-
 	UPROPERTY(BlueprintReadWrite)
 	UDGameInstance* DGameInstance;
 	
@@ -64,7 +61,7 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	bool IsOnRopeBridge;
 
 
-	bool IsRunningDebug{false};
+	bool IsRunningDebug{true};
 	
 	
 };

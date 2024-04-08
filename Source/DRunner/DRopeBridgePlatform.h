@@ -36,10 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float WindSpeed;
 	
-	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float RotationCooldown;
 	
-	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
+	UPROPERTY()
 	FVector WindDirection;
 	
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
@@ -118,4 +117,7 @@ public:
 
 	UPROPERTY()
 	UDGameInstance* GameInstanceRef;
+
+	UPROPERTY()
+	bool CanSwing;
 };

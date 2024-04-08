@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputAction.h"
+#include "DGamePlatformEnums.h"
 #include "DPlayer.generated.h"
 
 class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
 class USphereComponent;
+class UAudioComponent;
+class UDGameInstance;
 
 UCLASS()
 class DRUNNER_API ADPlayer : public ACharacter
@@ -75,7 +78,18 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* PlayerLeftLegAudio;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* PlayerRightLegAudio;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	EGameUsedLeg PlayerCurrentLeg;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	EGamePlatformMovementType PreviousPlatformMovementType;
+
 	void Walk(const FInputActionValue& InputValue);
 	void Look(const FInputActionValue& InputValue);
 	void StartRunning();
@@ -84,8 +98,25 @@ public:
 
 	UPROPERTY()
 	FTimerHandle PlayerDataSavingTimer;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float ChangeLegCooldown;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float WalkingLegCooldown;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float RunningLegCooldown;
+
+	UPROPERTY()
+	FTimerHandle ChangeLegCooldownTimer;
+	
 	void SavePlayerData();
+
+	void ChangeLeg();
+
+	UPROPERTY()
+	UDGameInstance* DGameInstanceRef;
 	
 private:
 	UPROPERTY()

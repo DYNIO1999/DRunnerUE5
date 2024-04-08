@@ -58,8 +58,7 @@ void ADMainGameModeBase::StartPlay()
 		float PlatformPosZ = 0;
 	
 		float PlatformConstantOffset = 1100;
-
-		EGamePlatformType PreviousPlatformType = EGamePlatformType::None;
+		
 		for (size_t i=0;i<ImageRawData.Num();i++)
 		{
 			
@@ -115,7 +114,6 @@ void ADMainGameModeBase::StartPlay()
 						FRotator SpawnRotation = FRotator(0.0f, angleYaw, 0.0f);
 						
 						if (PlatformType == EGamePlatformType::RopeBridgePlatform) {
-							//just in case
 							PlatformVectorPos = PlatformVectorPos + FVector(0.0, 0.0, 80.0f);
 						}
 						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
