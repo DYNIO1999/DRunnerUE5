@@ -4,12 +4,14 @@
 #include "GameFramework/Actor.h"
 #include "DGamePlatformEnums.h"
 #include "Materials/MaterialInterface.h"
+#include "DGameInstance.h"
 #include "DRopeBridgePlatform.generated.h"
 
 class UStaticMeshComponent;
 class UCableComponent;
 class USphereComponent;
 class UDLoggingComponent;
+
 
 UCLASS()
 class DRUNNER_API ADRopeBridgePlatform : public AActor
@@ -34,10 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float WindSpeed;
 	
-	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float RotationCooldown;
 	
-	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
+	UPROPERTY()
 	FVector WindDirection;
 	
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
@@ -113,4 +114,10 @@ public:
 
 	UFUNCTION()
 	void SwapRotation();
+
+	UPROPERTY()
+	UDGameInstance* GameInstanceRef;
+
+	UPROPERTY()
+	bool CanSwing;
 };

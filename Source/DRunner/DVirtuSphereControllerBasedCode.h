@@ -21,7 +21,13 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 
 	public:
 	virtual void Tick(float DeltaTime) override;
-
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
+	FVector WindDirection;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
+	float Angle;
+	
 	UPROPERTY(BlueprintReadWrite)
 	UDGameInstance* DGameInstance;
 	
@@ -41,7 +47,21 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	void PerformAscending();
 	void PerformDescending();
 
+	void PerformSwing();
 	
 	float MinimalVelocity =0.0f;
 	float MaximumVelocity = 6.0f;
+	
+	bool IsMotorPowerEnabled;
+
+	bool IsUsingUpAndDowMotor;
+
+	FTimerHandle WindSwingTimer;
+
+	bool IsOnRopeBridge;
+
+
+	bool IsRunningDebug{true};
+	
+	
 };

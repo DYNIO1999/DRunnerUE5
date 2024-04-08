@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputAction.h"
+#include "DGamePlatformEnums.h"
 #include "DPlayer.generated.h"
 
 class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
 class USphereComponent;
+class UAudioComponent;
+class UDGameInstance;
 
 UCLASS()
 class DRUNNER_API ADPlayer : public ACharacter
@@ -18,11 +21,9 @@ class DRUNNER_API ADPlayer : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ADPlayer();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
@@ -38,10 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "EventPlayerLost")
 	void PlayerDead();
 	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
@@ -75,7 +74,18 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* PlayerLeftLegAudio;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* PlayerRightLegAudio;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	EGameUsedLeg PlayerCurrentLeg;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	EGamePlatformMovementType PreviousPlatformMovementType;
+
 	void Walk(const FInputActionValue& InputValue);
 	void Look(const FInputActionValue& InputValue);
 	void StartRunning();
@@ -84,21 +94,33 @@ public:
 
 	UPROPERTY()
 	FTimerHandle PlayerDataSavingTimer;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float ChangeLegCooldown;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float WalkingLegCooldown;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float RunningLegCooldown;
+
+	UPROPERTY()
+	FTimerHandle ChangeLegCooldownTimer;
+	
 	void SavePlayerData();
+
+	void ChangeLeg();
+
+	UPROPERTY()
+	UDGameInstance* DGameInstanceRef;
 	
 private:
 	UPROPERTY()
 	float CurrentCharacterSpeed;
-
 	
 	UPROPERTY()
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComp;
-
-
+	
 	void ChangeSpeedValue(float SpeedValue) const;
-
 	
-	
-	//OnEventGathered.Broadcast();
 };

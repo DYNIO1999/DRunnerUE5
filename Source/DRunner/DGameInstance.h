@@ -60,4 +60,16 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	EGamePlatformType CurrentPlatformType;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector CurrentWindDirection;
+
+	UPROPERTY(BlueprintReadWrite)
+	float ChangeLegCooldown;
+
+	UPROPERTY(BlueprintReadWrite)
+	EGamePlatformMovementType CurrentPlatformMovementType;
+
+	UPROPERTY(BlueprintReadWrite)
+	EGameUsedLeg CurrentPlayerLeg;
 };

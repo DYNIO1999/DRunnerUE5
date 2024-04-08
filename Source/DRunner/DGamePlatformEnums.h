@@ -33,6 +33,12 @@ enum class EGamePlatformMovementType : uint8
 	SpawnPoint = 250 UMETA(DisplayName = "SpawnPoint")
 };
 
+UENUM(BlueprintType) 
+enum class EGameUsedLeg : uint8
+{
+	Left = 0  UMETA(DisplayName = "Left"),
+	Right = 1 UMETA(DisplayName = "Right")
+};
 
 static EGamePlatformType CheckPlatformType(const uint8 Value)
 {

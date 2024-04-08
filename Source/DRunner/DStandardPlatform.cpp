@@ -68,6 +68,8 @@ void ADStandardPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 		UDGameInstance* DGameInstance = Cast<UDGameInstance>(GetGameInstance());
 		
 		DGameInstance->CurrentPlatformType = PlatformType;
+		DGameInstance->CurrentPlatformMovementType = PlatformMovementType;
+		
 		GetWorldTimerManager().SetTimer(MyTimerHandle, this, &ADStandardPlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}
 }
