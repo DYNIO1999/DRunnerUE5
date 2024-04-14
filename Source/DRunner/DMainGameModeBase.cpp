@@ -9,6 +9,8 @@
 #include "DRopeBridgePlatform.h"
 #include "DStandardPlatform.h"
 
+
+
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
@@ -42,106 +44,145 @@ void ADMainGameModeBase::StartPlay()
 	
 	float PlayerStartYOffset = 0;
 	
-	
 	if (MyGameInstance)
 	{
-		
 		const int ImageWidth = MyGameInstance->ImageLevelInfo.ImageWidthSize;
+		const int ImageHeight = MyGameInstance->ImageLevelInfo.ImageHeightSize;
 		const int BytesPerPixel = MyGameInstance->ImageLevelInfo.PixelSizeInBytes;
-	
 		const auto& ImageRawData = MyGameInstance->ImageLevelInfo.ImageData;
-		
-		int PixelCount = 0;
-		
+
 		float PlatformPosX = 0;
 		float PlatformPosY = 0;
 		float PlatformPosZ = 0;
 	
 		float PlatformConstantOffset = 1100;
 		
-		for (size_t i=0;i<ImageRawData.Num();i++)
+		TArray<TArray<FPlatformDefinition>> Map;
+		for(size_t i =0;i<ImageHeight;i++)
 		{
-			
-			if(((i+1) % BytesPerPixel) ==0)
+			Map.Push(TArray<FPlatformDefinition>());
+		}
+
+		int I_MapIndex = 0;
+		
+		int PixelCount = 0;
+		for (size_t i=0;i<ImageRawData.Num();i+= BytesPerPixel)
+		{	
+			if(PixelCount == ImageWidth)
 			{
-				
+				PixelCount=0;
+				I_MapIndex++;
+			}
+			if (i + 3 < ImageRawData.Num())
+			{
+				const EGamePlatformType PlatformType = CheckPlatformType(ImageRawData[i]);
+				const EGamePlatformDirection PlatformDirection = CheckPlatformDirection(ImageRawData[i+1]);
+				const EGamePlatformMovementType PlatformMovement = CheckPlatformMovementType(ImageRawData[i+2]);
+				Map[I_MapIndex].Push(FPlatformDefinition(PlatformType,PlatformDirection, PlatformMovement)); 
+				PixelCount++;
+			}
+		}
+		
+		for(size_t i =0;i<ImageHeight;i++)
+		{
+			for(size_t j =0;j<ImageWidth;j++)
+			{
+				EGamePlatformType CurrentPlatformType = Map[i][j].PlatformType;
+				EGamePlatformDirection CurrentPlatformDirection = Map[i][j].PlatformDirection;
+				EGamePlatformMovementType CurrentPlatformMovementType = Map[i][j].MovementType;
+				bool IsAlreadySet = Map[i][j].AlreadySet;
 				
 				bool IsValid = true;
-				
-				if(PixelCount==ImageWidth)
-				{
-					PlatformPosX=0;
-					PlatformPosY+=PlatformConstantOffset;
-					PixelCount= 0;
-				}
-				
-				TArray<int> Pixel;
-				for(int j=i-(BytesPerPixel-1);j<i;j++)
-				{
-					
-					Pixel.Push(ImageRawData[j]);
-						
-				}
-	
-				EGamePlatformType PlatformType = CheckPlatformType(Pixel[0]);
-				if (PlatformType == EGamePlatformType::None)
+				if (Map[i][j].PlatformType == EGamePlatformType::None)
 				{
 					IsValid = false;
 				}
-				
-				
 				if (IsValid)
 				{
 					FVector PlatformVectorPos= FVector(PlatformPosX, PlatformPosY, PlatformPosZ);
-	
-					EGamePlatformDirection PlatformDirection = CheckPlatformDirection(Pixel[1]);
-					EGamePlatformMovementType PlatformMovement = CheckPlatformMovementType(Pixel[2]);
 					
-					if (PlatformMovement == EGamePlatformMovementType::SpawnPoint)
+					if (CurrentPlatformMovementType == EGamePlatformMovementType::SpawnPoint)
 					{
 						PlayerStartYOffset = PlatformPosY;	
 					}
-					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(PlatformType, PlatformDirection, PlatformMovement);
 
+					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
 					
 					if (GetWorld())
 					{
 						FActorSpawnParameters SpawnParams;
 						SpawnParams.Owner = this;
-	
-						
-						float angleYaw  = GetAngleBasedOnPlatformDirection(PlatformDirection);
+					
+										
+						float angleYaw  = GetAngleBasedOnPlatformDirection(CurrentPlatformType, CurrentPlatformDirection);
 						FRotator SpawnRotation = FRotator(0.0f, angleYaw, 0.0f);
-						
-						if (PlatformType == EGamePlatformType::RopeBridgePlatform) {
-							PlatformVectorPos = PlatformVectorPos + FVector(0.0, 0.0, 80.0f);
+										
+
+						if (CurrentPlatformType == EGamePlatformType::RopeBridgePlatform) {
+							PlatformVectorPos = PlatformVectorPos + FVector(0.0f, 0.0, 80.0f);
 						}
-						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
 						
-						if (PlatformType == EGamePlatformType::RopeBridgePlatform) {
-							ADRopeBridgePlatform* RopeBridgePlatformPtr = Cast<ADRopeBridgePlatform>(SpawnedActor);
-							RopeBridgePlatformPtr->InitializePlatform(PlatformType, PlatformDirection, PlatformMovement);
-						}
-						else {
-							ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
-							StandardPlatform->InitializePlatform(PlatformType, PlatformDirection, PlatformMovement);
+						if(!IsAlreadySet)
+						{
+							AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, PlatformVectorPos, SpawnRotation, SpawnParams);
+										
+							if (CurrentPlatformType == EGamePlatformType::RopeBridgePlatform) {
+								int BridgeSize = 1;
+
+								if (i> 0  && i < ImageHeight && j>0 && j < ImageWidth)
+								{
+									//UE_LOG(LogTemp, Error, TEXT("TEST"));
+									for(int k=1;k<=3;k++)
+									{
+										if (Map[i][j+k].PlatformType == EGamePlatformType::RopeBridgePlatform)
+										{
+											Map[i][j+k].AlreadySet = true;
+											BridgeSize++;
+										}else
+										{
+											break;
+										}
+									}
+								
+									for(int k=1;k<=3;k++)
+									{
+										if (Map[i+k][j].PlatformType == EGamePlatformType::RopeBridgePlatform)
+										{
+											Map[i+k][j].AlreadySet = true;
+											BridgeSize++;
+										}else
+										{
+											break;
+										}
+									}
+									Map[i][j].AlreadySet = true;
+								
+								}
+								ADRopeBridgePlatform* RopeBridgePlatformPtr = Cast<ADRopeBridgePlatform>(SpawnedActor);
+								RopeBridgePlatformPtr->InitializePlatform(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
+
+								//UE_LOG(LogTemp, Error, TEXT("BRIDGE SIZE %d"), BridgeSize);
+								RopeBridgePlatformPtr->CreateBridge(RopeBridgePlatformPtr->NumberOfPlanks*BridgeSize+1);
+							}
+							else {
+								ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
+								StandardPlatform->InitializePlatform(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
+							}
 						}
 					}
+					
 				}
-	
+				PlatformPosX+=PlatformConstantOffset;	
 				
-				PlatformPosX+=PlatformConstantOffset;
-				PixelCount++;
 			}
+			PlatformPosX = 0;
+			PlatformPosY+=PlatformConstantOffset;
 		}
 	}
-	
 	
 	TArray<AActor*> FoundCoins;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
 	MaxCoinsOnLevel= FoundCoins.Num();
-	//UE_LOG(LogTemp, Warning, TEXT("Max Coins on level %d"), MaxCoinsOnLevel);
-	
 	
 	for(int i = 0; i < FoundCoins.Num(); i++)
 	{

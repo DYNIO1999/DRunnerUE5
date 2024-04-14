@@ -167,6 +167,6 @@ void ADVirtuSphereControllerBasedCode::PerformSwing()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	
-	float Result = FMath::Min(VelocityAsScalar + 0.1f, 6.0);
+	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
 	SetSpherePose(Result, Angle+30.0f*WindDirection.X);
 }
