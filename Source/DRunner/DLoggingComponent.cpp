@@ -53,7 +53,8 @@ void UDLoggingComponent::SaveLoggedData(
 						DGameInstance->PlayerCurrentVelocity,
 						DGameInstance->PlayerCurrentPosition,
 						DGameInstance->PlayerCurrentRotation,
-						SavedMotorStates[Key][i]);
+						SavedMotorStates[Key][i],
+						static_cast<int>(DGameInstance->CurrentPlayerLeg));
 					
 					UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);	
 				}

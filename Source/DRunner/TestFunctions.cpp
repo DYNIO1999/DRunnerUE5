@@ -84,9 +84,10 @@ FString UTestFunctions::PreProcessLogData(
 	const FVector& PlayerVelocity,
 	const FVector& PlayerPosition,
 	const FRotator& PlayerRotation,
-	const FMotorStateEvent& MotorState)
+	const FMotorStateEvent& MotorState,
+	const int CurrentLeg)
 {
-	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f\n"),
+	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f,%d\n"),
 		CurrentTime,
 		PlatformType,
 		PlatformDirection,
@@ -108,14 +109,15 @@ FString UTestFunctions::PreProcessLogData(
 		MotorState.encoderPosition,
 		MotorState.motorVelocity,
 		MotorState.motorVoltage,
-		MotorState.motorCurrent);
+		MotorState.motorCurrent,
+		CurrentLeg);
 
 	return RowToSave;
 }
 
 FString UTestFunctions::CreateColumnNames()
 {
-	FString RowToSave = FString::Printf(TEXT("CurrentTime,PlatformType,PlatformDirection,PlatformMovementType,PlayerVelocity.x,PlayerVelocity.y,PlayerVelocity.z,PlayerPosition.x,PlayerPosition.y,PlayerPosition.z,PlayerRotation.Pitch,PlayerRotation.Roll,PlayerRotation.Yaw,PlayerCurrentSpeed,UnixTimeStamp [us],ControllerId,MotorFlags,HallPosition,EncoderPosition,MotorVelocity,MotorVoltage,MotorCurrent \n"));
+	FString RowToSave = FString::Printf(TEXT("CurrentTime,PlatformType,PlatformDirection,PlatformMovementType,PlayerVelocity.x,PlayerVelocity.y,PlayerVelocity.z,PlayerPosition.x,PlayerPosition.y,PlayerPosition.z,PlayerRotation.Pitch,PlayerRotation.Roll,PlayerRotation.Yaw,PlayerCurrentSpeed,UnixTimeStamp [us],ControllerId,MotorFlags,HallPosition,EncoderPosition,MotorVelocity,MotorVoltage,MotorCurrent,CurrentLeg\n"));
 	return RowToSave;
 }
 
