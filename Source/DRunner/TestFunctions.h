@@ -64,7 +64,8 @@ public:
 	const FVector& PlayerVelocity,
 	const FVector& PlayerPosition,
 	const FRotator& PlayerRotation,
-	const FMotorStateEvent& MotorStates);
+	const FMotorStateEvent& MotorStates,
+	const int CurrentLeg);
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
 	static FString CreateColumnNames();

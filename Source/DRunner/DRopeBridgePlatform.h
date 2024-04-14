@@ -35,6 +35,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float WindSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
+	float RunningSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
+	float WalkSpeed;
 	
 	float RotationCooldown;
 	
@@ -47,7 +53,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float RopeGravityScale;
 	
-	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
+	UPROPERTY()
 	int NumberOfPlanks;
 	
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
@@ -61,6 +67,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category="Rope Bridge")
 	UStaticMeshComponent* BridgeStart;
+
+	UPROPERTY(EditAnywhere, Category="Rope Bridge")
+	UStaticMeshComponent* BridgeCollisionBlockerLeft;
+	
+	UPROPERTY(EditAnywhere, Category="Rope Bridge")
+	UStaticMeshComponent* BridgeCollisionBlockerRight;
 
 	UPROPERTY(EditAnywhere, Category="Rope Bridge")
 	UStaticMeshComponent* BridgeEnd;
@@ -93,15 +105,20 @@ public:
 	UPROPERTY()
 	FTimerHandle SwapRotationTimer;
 
+	UPROPERTY()
+	FRotator TargetRotation;
+	
 	void ProduceLog();
 	
 	UPROPERTY(EditAnywhere, Category = "Logging Delay")
 	float LoggingDelayInSeconds;
-	
+
+	void ConstructBridge();
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
+	void CreateBridge(int NumberOfWoodenPlanks);
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 

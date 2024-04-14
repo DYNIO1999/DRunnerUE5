@@ -7,6 +7,30 @@
 #include "DMainGameModeBase.generated.h"
 
 
+
+USTRUCT(BlueprintType)
+struct FPlatformDefinition
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGamePlatformType PlatformType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGamePlatformDirection PlatformDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGamePlatformMovementType MovementType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AlreadySet;
+	
+	FPlatformDefinition() = default;
+	
+	FPlatformDefinition(const EGamePlatformType Type, const EGamePlatformDirection Direction, const EGamePlatformMovementType Movement)
+		: PlatformType(Type), PlatformDirection(Direction), MovementType(Movement), AlreadySet(false) {}
+};
+
 UCLASS()
 class DRUNNER_API ADMainGameModeBase : public AGameModeBase
 {

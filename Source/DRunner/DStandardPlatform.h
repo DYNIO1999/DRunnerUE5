@@ -13,7 +13,7 @@ class UDLoggingComponent;
 
 UCLASS()
 class DRUNNER_API ADStandardPlatform : public AActor
-{
+{	
 	GENERATED_BODY()
 	
 public:	

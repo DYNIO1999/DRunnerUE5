@@ -23,11 +23,18 @@ ADRopeBridgePlatform::ADRopeBridgePlatform()
 	BridgeEnd = CreateDefaultSubobject<UStaticMeshComponent>("BridgeEnd");
 	BridgeEnd->SetupAttachment(RootComponent);
 
+	BridgeCollisionBlockerLeft = CreateDefaultSubobject<UStaticMeshComponent>("BridgeBlockerLeft");
+	BridgeCollisionBlockerLeft->SetupAttachment(RootComponent);
+
+	BridgeCollisionBlockerRight = CreateDefaultSubobject<UStaticMeshComponent>("BridgeBlockerRight");
+	BridgeCollisionBlockerRight->SetupAttachment(RootComponent);
+
 	
 	LogComponent = CreateDefaultSubobject<UDLoggingComponent>(TEXT("LogComponent"));
 	PrimaryActorTick.bCanEverTick = true;
 	CanSwing = false;
-	
+
+	NumberOfPlanks =10;
 }
 
 void ADRopeBridgePlatform::InitializePlatform(const EGamePlatformType PlatformTypePar,
@@ -49,54 +56,8 @@ void ADRopeBridgePlatform::ProduceLog()
 	}
 }
 
-void ADRopeBridgePlatform::BeginPlay()
+void ADRopeBridgePlatform::ConstructBridge()
 {
-	Super::BeginPlay();
-
-
-	CanProduceLog = false;
-	LoggingDelayInSeconds =0.1f;
-	
-	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	if(DGameInstance)
-	{
-		GameInstanceRef = DGameInstance;
-		
-		if (GameInstanceRef->CurrentPlayerLeg == EGameUsedLeg::Left)
-			WindDirection = FVector(-1.0f, 0.0f, 0.0f); 
-		else
-		{
-			WindDirection = FVector(1.0f, 0.0f, 0.0f);
-		}
-		
-		GameInstanceRef->CurrentWindDirection = WindDirection;
-		RotationCooldown = GameInstanceRef->ChangeLegCooldown;
-		
-	}
-	
-	
-	GetWorld()->GetTimerManager().SetTimer(SwapRotationTimer, this, &ADRopeBridgePlatform::SwapRotation, RotationCooldown, true);
-	
-}
-
-void ADRopeBridgePlatform::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	if (CanSwing)
-	{
-		for (const auto Plank : BridgePlanksMeshComponents)
-		{
-			const FVector CurrentVelocity = WindDirection* WindSpeed *DeltaTime;
-			Plank->SetRelativeRotation(Plank->GetRelativeRotation()+FRotator(CurrentVelocity.Y, CurrentVelocity.Z, CurrentVelocity.X));
-		}
-	}
-}
-
-void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
-{
-	Super::OnConstruction(Transform);
-	
 	for (UStaticMeshComponent* Component : BridgePlanksMeshComponents)
 	{
 		if (Component)
@@ -126,9 +87,8 @@ void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
 	}
 
 	const float MiddlePosition = NumberOfPlanks / 2.0f ;
-	float HalfDistance = MiddlePosition* SpaceBetweenPlanks;
 	float LastHeight =0.0;
-	const FVector CurrentPosition = FVector::Zero();
+	const FVector CurrentPosition = FVector(-400.0f,0.0f,0.0);
 	
 	for(size_t i =0; i< NumberOfPlanks;i++)
 	{
@@ -140,11 +100,18 @@ void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
 		{
 			LastHeight +=HeightOffset;
 		}
-		BridgePlanksMeshComponents[i]->SetRelativeLocation(FVector(i * SpaceBetweenPlanks - HalfDistance, CurrentPosition.Y, LastHeight));
+		BridgePlanksMeshComponents[i]->SetRelativeLocation(FVector(i * SpaceBetweenPlanks+CurrentPosition.X, CurrentPosition.Y, LastHeight));
 		BridgePlanksMeshComponents[i]->OnComponentBeginOverlap.AddDynamic(this, &ADRopeBridgePlatform::OnOverlapBegin);
 		BridgePlanksMeshComponents[i]->OnComponentEndOverlap.AddDynamic(this, &ADRopeBridgePlatform::OnOverlapEnd);
 	}
 
+	int middle = NumberOfPlanks/2;
+	
+	BridgeCollisionBlockerLeft->SetRelativeLocation(BridgePlanksMeshComponents[middle]->GetRelativeLocation() + FVector(0.0f,-220.0f,0.0f));
+	BridgeCollisionBlockerLeft->SetWorldScale3D(FVector(static_cast<float>(NumberOfPlanks), 1.0, 10.0));
+	
+	BridgeCollisionBlockerRight->SetRelativeLocation(BridgePlanksMeshComponents[middle]->GetRelativeLocation() + FVector(0.0f,220.0f,0.0f));
+	BridgeCollisionBlockerRight->SetWorldScale3D(FVector(static_cast<float>(NumberOfPlanks), 1.0, 10.0));
 
 	BridgeStart->SetRelativeLocation(FVector(BridgePlanksMeshComponents[0]->GetRelativeLocation().X-100.0f, CurrentPosition.Y, CurrentPosition.Z));
 	
@@ -174,12 +141,70 @@ void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
 
 	Ropes[0]->EndLocation = FVector(BridgeEnd->GetRelativeLocation().X, BridgeEnd->GetRelativeLocation().Y +160.0f , BridgeEnd->GetRelativeLocation().Z+60.0f);
 	Ropes[1]->EndLocation = FVector(BridgeEnd->GetRelativeLocation().X, BridgeEnd->GetRelativeLocation().Y -160.0f , BridgeEnd->GetRelativeLocation().Z+60.0f);
+}
 
-	// for (const auto Plank : BridgePlanksMeshComponents)
-	// {
-	// 	const FVector CurrentVelocity = WindDirection* WindSpeed* -1.0f;
-	// 	Plank->SetRelativeRotation(Plank->GetRelativeRotation()+FRotator(CurrentVelocity.Y, CurrentVelocity.Z, CurrentVelocity.X));
-	// }
+void ADRopeBridgePlatform::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+	CanProduceLog = false;
+	LoggingDelayInSeconds =0.1f;
+	
+	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if(DGameInstance)
+	{
+		GameInstanceRef = DGameInstance;
+		
+		if (GameInstanceRef->CurrentPlayerLeg == EGameUsedLeg::Left)
+			WindDirection = FVector(-1.0f, 0.0f, 0.0f); 
+		else
+		{
+			WindDirection = FVector(1.0f, 0.0f, 0.0f);
+		}
+		
+		GameInstanceRef->CurrentWindDirection = WindDirection;
+		RotationCooldown = GameInstanceRef->ChangeLegCooldown;
+		
+	}
+	
+	GetWorld()->GetTimerManager().SetTimer(SwapRotationTimer, this, &ADRopeBridgePlatform::SwapRotation, RotationCooldown, true);
+	
+}
+
+void ADRopeBridgePlatform::CreateBridge(int NumberOfWoodenPlanks)
+{
+	NumberOfPlanks = NumberOfWoodenPlanks;
+	ConstructBridge();
+}
+
+void ADRopeBridgePlatform::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (CanSwing)
+	{
+		if (PlatformMovementType == EGamePlatformMovementType::Running)
+		{
+			WindSpeed = RunningSpeed;
+		}else
+		{
+			WindSpeed = WalkSpeed;
+		}
+		
+		for (const auto Plank : BridgePlanksMeshComponents)
+		{
+			
+			FRotator NewRotation = FMath::RInterpTo(Plank->GetRelativeRotation(), TargetRotation, DeltaTime, WindSpeed);
+			Plank->SetRelativeRotation(NewRotation);
+		}
+	}
+}
+
+void ADRopeBridgePlatform::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	ConstructBridge();
 }
 
 void ADRopeBridgePlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -211,6 +236,8 @@ void ADRopeBridgePlatform::SwapRotation()
 {
 	WindDirection*=-1.0f;
 	GameInstanceRef->CurrentWindDirection = WindDirection;
+	const FVector CurrentVelocity = WindDirection* 10.0f;
+	TargetRotation = FRotator(CurrentVelocity.Y, CurrentVelocity.Z, CurrentVelocity.X);
 
 }
 

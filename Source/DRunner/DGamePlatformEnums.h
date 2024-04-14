@@ -101,7 +101,7 @@ static EGamePlatformDirection CheckPlatformDirection(const uint8 Value)
 	return PlatformDirection;
 }
 
-static float GetAngleBasedOnPlatformDirection(const EGamePlatformDirection Value)
+static float GetAngleBasedOnPlatformDirection(const EGamePlatformType PlatformType, const EGamePlatformDirection Value)
 {
 	float Angle; 
 	switch (Value) {  
@@ -121,6 +121,13 @@ static float GetAngleBasedOnPlatformDirection(const EGamePlatformDirection Value
 		Angle = 0.0;
 		break;
 			
+	}
+	if(PlatformType == EGamePlatformType::RopeBridgePlatform)
+	{
+		if(Value == EGamePlatformDirection::Left)
+			Angle = 90.0;
+		else if(Value == EGamePlatformDirection::Back)
+			Angle = 0.0;
 	}
 	return Angle;
 }
