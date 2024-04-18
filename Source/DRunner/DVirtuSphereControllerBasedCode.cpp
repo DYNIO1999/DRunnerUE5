@@ -102,15 +102,17 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	if(DGameInstance->CurrentPlatformType == EGamePlatformType::RopeBridgePlatform && !IsOnRopeBridge)
 	{
 
-		FVector PlayerVelocityNormalized = DGameInstance->PlayerCurrentVelocity.GetSafeNormal();
+		/*
+		FVector PlayerVelocityNormalized = DGameInstance->CurrentPlatformFowardVector.GetSafeNormal();
 		FRotator Rotation = PlayerVelocityNormalized.Rotation();
 		int AngleToInt = 0;
 		if(Rotation.Yaw!=0.0f)
 		{
 			AngleToInt = Rotation.Yaw / 10.0f;	
-		}
+		}*/
 		
-		Angle = AngleToInt*10.0f;
+		
+		Angle = DGameInstance->AngleToSwing;
 		
 		SetMotorPower(true);
 		PerformSwing();
@@ -168,5 +170,5 @@ void ADVirtuSphereControllerBasedCode::PerformSwing()
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	
 	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
-	SetSpherePose(Result, Angle+20.0f*WindDirection.X);
+	SetSpherePose(Result, Angle+30.0f*WindDirection.X);
 }

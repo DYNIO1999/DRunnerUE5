@@ -55,6 +55,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category="Player Stats")
 	FVector SpherePoseEvent;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Platform Foward Vector")
+	float AngleToSwing;
 	
 	TMap<int64, TArray<FMotorStateEvent>> SavedMotorStatesEvents;
 
