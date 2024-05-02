@@ -61,7 +61,7 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	bool IsOnRopeBridge;
 
 
-	bool IsRunningDebug{false};
+	bool IsRunningDebug{true};
 	
 	
 };

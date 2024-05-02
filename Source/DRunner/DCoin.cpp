@@ -4,6 +4,9 @@
 #include "DCoin.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+
+#include "EventManager.h"
+
 #include "DPlayer.h"
 // Sets default values
 ADCoin::ADCoin()
@@ -51,5 +54,9 @@ void ADCoin::SendInfoGathered() const
 {
 	OnEventGathered.Broadcast();
 
-
+	if(UEventManager::PlaySoundGatheredDelegate.IsBound())
+	{
+		UEventManager::PlaySoundGatheredDelegate.Broadcast();
+	}
+	
 }

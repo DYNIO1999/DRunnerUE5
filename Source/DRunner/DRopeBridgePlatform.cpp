@@ -3,7 +3,7 @@
 #include "Components/SphereComponent.h"
 #include "DLoggingComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Components/AudioComponent.h"
 
 ADRopeBridgePlatform::ADRopeBridgePlatform()
 {
@@ -31,6 +31,11 @@ ADRopeBridgePlatform::ADRopeBridgePlatform()
 
 	
 	LogComponent = CreateDefaultSubobject<UDLoggingComponent>(TEXT("LogComponent"));
+	
+	WaterAmbientSound = CreateDefaultSubobject<UAudioComponent>(TEXT("WaterAmbientSound"));
+	WaterAmbientSound->SetupAttachment(RootComponent);
+	WaterAmbientSound->bAutoActivate = false;
+	
 	PrimaryActorTick.bCanEverTick = true;
 	CanSwing = false;
 
@@ -223,12 +228,16 @@ void ADRopeBridgePlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase) &&  ((BridgePlanksMeshComponents.Last() == OverlappedComp && DotResult >= 0) || (BridgePlanksMeshComponents[0] == OverlappedComp && DotResult<0))) 
 	{
 		CanSwing = false;
-		//UE_LOG(LogTemp, Error, TEXT("Overlapping end"));
 		CanProduceLog =  false;
 		GetWorldTimerManager().ClearTimer(LoggingCooldown);
 		for (const auto Plank : BridgePlanksMeshComponents)
 		{
 			Plank->SetRelativeRotation(FRotator(0.0f,0.0f, 0.0f));
+		}
+
+		if(WaterAmbientSound->IsPlaying())
+		{
+			WaterAmbientSound->Stop();
 		}
 	}
 	
@@ -273,6 +282,13 @@ void ADRopeBridgePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 	
 		DGameInstance->CurrentPlatformType = PlatformType;
 		DGameInstance->CurrentPlatformMovementType = PlatformMovementType;
+
+		
+		if(not WaterAmbientSound->IsPlaying())
+		{
+			WaterAmbientSound->Play();
+		}
+		
 		
 		GetWorldTimerManager().SetTimer(LoggingCooldown, this, &ADRopeBridgePlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}

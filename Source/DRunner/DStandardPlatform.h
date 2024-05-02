@@ -10,6 +10,7 @@
 class UDSpawnCoinComp;
 class USphereComponent;
 class UDLoggingComponent;
+class UAudioComponent;
 
 UCLASS()
 class DRUNNER_API ADStandardPlatform : public AActor
@@ -55,6 +56,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USphereComponent> SphereComp;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* StandardPlatformAmbientSound;
 	
 	virtual void Tick(float DeltaTime) override;
 	
