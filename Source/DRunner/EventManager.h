@@ -3,8 +3,7 @@
 #include "EventManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGenerateAudioGathered);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSavedPlayerInfo);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLoadPlayerInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLostXRHeadsetTracking,FRotator, NewRotation);
 
 UCLASS()
 class DRUNNER_API UEventManager : public UObject
@@ -13,6 +12,5 @@ class DRUNNER_API UEventManager : public UObject
 public:
 	
 	static FGenerateAudioGathered PlaySoundGatheredDelegate;
-	static FSavedPlayerInfo SavePlayerInfoDelegate;
-	static FLoadPlayerInfo LoadPlayerInfoDelegate;  
+	static FOnLostXRHeadsetTracking LostXRHeadsetTrackingDelegate;  
 };

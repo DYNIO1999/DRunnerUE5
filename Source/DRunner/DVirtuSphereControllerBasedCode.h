@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "AVirtuSphereController.h"
 #include "DGameInstance.h"
+#include "IXRTrackingSystem.h"
+
 #include "DVirtuSphereControllerBasedCode.generated.h"
 
 UCLASS()
@@ -36,6 +38,9 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 
 	UPROPERTY(BlueprintReadWrite, Category="Speed Ascending And Descending")
 	float SpeedAscendingAndDescending{0.1};
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Camera XR Last Rotation")
+	FRotator LastKnownXRCameraRotator;
 	
 	private:
 	FTimerHandle AscendDelay;
@@ -62,6 +67,6 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 
 
 	bool IsRunningDebug{true};
-	
+
 	
 };

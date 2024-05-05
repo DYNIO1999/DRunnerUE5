@@ -1,4 +1,5 @@
 #include "DVirtuSphereControllerBasedCode.h"
+#include "EventManager.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
@@ -146,6 +147,20 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		SetMotorPower(false);
 		IsOnRopeBridge = false;
 	}
+
+	// if(!IsRunningDebug)
+	// {
+		IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
+
+		if (XRTracking && XRTracking->IsTracking(IXRTrackingSystem::HMDDeviceId))
+		{
+			LastKnownXRCameraRotator = XRTracking->GetBaseRotation();
+		}else
+		{
+			UEventManager::LostXRHeadsetTrackingDelegate.Broadcast(LastKnownXRCameraRotator);				
+			UE_LOG(LogTemp, Warning, TEXT("VR Headset Tracking Lost"));
+		}
+	// }
 }
 
 void ADVirtuSphereControllerBasedCode::PerformAscending()

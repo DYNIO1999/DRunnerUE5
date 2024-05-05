@@ -31,6 +31,10 @@ public:
 	
 	UFUNCTION()
 	void PlayPickedUpCoinSound();
+
+	UFUNCTION()
+	void HandleLostTrackingOnXRHeadset(FRotator NewRotation);
+
 	
 	UPROPERTY(EditAnywhere, Category="Player VituSphere Movement")
 	FVector PlayerVirtuSphereMovement;

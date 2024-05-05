@@ -8,6 +8,7 @@
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
 #include "EventManager.h"
+#include "IXRTrackingSystem.h"
 
 ADPlayer::ADPlayer()
 {
@@ -56,6 +57,8 @@ void ADPlayer::BeginPlay()
 	GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
 
 	UEventManager::PlaySoundGatheredDelegate.AddDynamic(this, &ADPlayer::PlayPickedUpCoinSound);
+	UEventManager::LostXRHeadsetTrackingDelegate.AddDynamic(this, &ADPlayer::HandleLostTrackingOnXRHeadset);
+	
 }
 
 void ADPlayer::PlayerDead()
@@ -210,6 +213,12 @@ void ADPlayer::ChangeLeg()
 void ADPlayer::PlayPickedUpCoinSound()
 {
 	PlayerPickedUpAudio->Play();
+}
+
+void ADPlayer::HandleLostTrackingOnXRHeadset(FRotator NewRotation)
+{
+	
+	CameraComp->SetRelativeRotation(NewRotation);
 }
 
 void ADPlayer::ChangeSpeedValue(float SpeedValue) const
