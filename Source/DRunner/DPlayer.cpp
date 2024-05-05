@@ -7,6 +7,8 @@
 #include "Components/AudioComponent.h"
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
+#include "EventManager.h"
+#include "IXRTrackingSystem.h"
 
 ADPlayer::ADPlayer()
 {
@@ -28,6 +30,11 @@ ADPlayer::ADPlayer()
 	PlayerLeftLegAudio->SetupAttachment(RootComponent);
 
 	PlayerLeftLegAudio->bAutoActivate = false;
+
+	PlayerPickedUpAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerPickedUpAudio"));
+	PlayerPickedUpAudio->SetupAttachment(RootComponent);
+
+	PlayerPickedUpAudio->bAutoActivate = false;
 }
 
 void ADPlayer::BeginPlay()
@@ -48,6 +55,9 @@ void ADPlayer::BeginPlay()
 	DGameInstanceRef ->ChangeLegCooldown = ChangeLegCooldown;
 	PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
 	GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
+
+	UEventManager::PlaySoundGatheredDelegate.AddDynamic(this, &ADPlayer::PlayPickedUpCoinSound);
+	UEventManager::LostXRHeadsetTrackingDelegate.AddDynamic(this, &ADPlayer::HandleLostTrackingOnXRHeadset);
 	
 }
 
@@ -61,8 +71,6 @@ void ADPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (PreviousPlatformMovementType != DGameInstanceRef->CurrentPlatformMovementType)
 	{
-		
-		UE_LOG(LogTemp, Error, TEXT("TICK IN DPLAYER"));
 		if (DGameInstanceRef->CurrentPlatformMovementType == EGamePlatformMovementType::Running)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
@@ -80,6 +88,7 @@ void ADPlayer::Tick(float DeltaTime)
 		}
 		PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
 	}
+	
 }
 
 // Called to bind functionality to input
@@ -199,6 +208,17 @@ void ADPlayer::ChangeLeg()
 			DGameInstanceRef->CurrentPlayerLeg = PlayerCurrentLeg;
 		}
 	}
+}
+
+void ADPlayer::PlayPickedUpCoinSound()
+{
+	PlayerPickedUpAudio->Play();
+}
+
+void ADPlayer::HandleLostTrackingOnXRHeadset(FRotator NewRotation)
+{
+	
+	CameraComp->SetRelativeRotation(NewRotation);
 }
 
 void ADPlayer::ChangeSpeedValue(float SpeedValue) const

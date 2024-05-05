@@ -3,8 +3,8 @@
 #include "DGameInstance.h"
 #include "DSpawnCoinComp.h"
 #include "Components/SphereComponent.h"
+#include "Components/AudioComponent.h"
 #include "DLoggingComponent.h"
-#include "DPlayer.h"
 
 ADStandardPlatform::ADStandardPlatform()
 {
@@ -23,6 +23,11 @@ ADStandardPlatform::ADStandardPlatform()
 	CoinSpawnComponent = CreateDefaultSubobject<UDSpawnCoinComp>(TEXT("CoinSpawnComponent"));
 
 	LogComponent = CreateDefaultSubobject<UDLoggingComponent>(TEXT("LogComponent"));
+
+	StandardPlatformAmbientSound = CreateDefaultSubobject<UAudioComponent>(TEXT("StandardPlatformAmbientSound"));
+	StandardPlatformAmbientSound->SetupAttachment(RootComponent);
+	StandardPlatformAmbientSound->bAutoActivate = false;
+	
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -53,10 +58,6 @@ void ADStandardPlatform::BeginPlay()
 void ADStandardPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	// if(CanProduceLog)
-	// {
-	// 	ProduceLog();
-	// }
 }
 
 void ADStandardPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -69,6 +70,11 @@ void ADStandardPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 		
 		DGameInstance->CurrentPlatformType = PlatformType;
 		DGameInstance->CurrentPlatformMovementType = PlatformMovementType;
+
+		if(not StandardPlatformAmbientSound->IsPlaying())
+		{
+			StandardPlatformAmbientSound->Play();
+		}
 		
 		GetWorldTimerManager().SetTimer(MyTimerHandle, this, &ADStandardPlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}
@@ -80,6 +86,12 @@ void ADStandardPlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActo
 	if (OtherComp->GetName().Equals(TEXT("PRINT_LOGGING"), ESearchCase::IgnoreCase))
 	{
 		CanProduceLog =  false;
+
+		if(StandardPlatformAmbientSound->IsPlaying())
+		{
+			StandardPlatformAmbientSound->Stop();
+		}
+
 		GetWorldTimerManager().ClearTimer(MyTimerHandle);
 	}
 }

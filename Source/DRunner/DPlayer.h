@@ -27,6 +27,14 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	
+	UFUNCTION()
+	void PlayPickedUpCoinSound();
+
+	UFUNCTION()
+	void HandleLostTrackingOnXRHeadset(FRotator NewRotation);
+
 	
 	UPROPERTY(EditAnywhere, Category="Player VituSphere Movement")
 	FVector PlayerVirtuSphereMovement;
@@ -79,6 +87,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	UAudioComponent* PlayerRightLegAudio;
+	
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* PlayerPickedUpAudio;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
 	EGameUsedLeg PlayerCurrentLeg;

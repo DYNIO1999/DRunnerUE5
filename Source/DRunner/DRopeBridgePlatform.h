@@ -11,7 +11,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 class USphereComponent;
 class UDLoggingComponent;
-
+class UAudioComponent;
 
 UCLASS()
 class DRUNNER_API ADRopeBridgePlatform : public AActor
@@ -27,6 +27,10 @@ public:
 			const EGamePlatformDirection PlatformDirectionPar,
 			const EGamePlatformMovementType MovementTypePar);
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	UAudioComponent* WaterAmbientSound;
+
+	
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	UMaterialInterface* RopeMaterialReference;
 	

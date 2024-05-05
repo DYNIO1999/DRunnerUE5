@@ -71,5 +71,8 @@ public:
 	static FString CreateColumnNames();
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
-    	static void DeleteFileIfExists(const FString& FileName);
+	static bool CheckIfFileExists(const FString& DirectoryName, const FString& FileName, const FString& Extension);
+	
+	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
+    	static void DeleteFileIfExists(const FString& DirectoryName, const FString& FileName, const FString& Extension);
 };

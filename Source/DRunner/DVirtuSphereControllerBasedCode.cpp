@@ -1,4 +1,5 @@
 #include "DVirtuSphereControllerBasedCode.h"
+#include "EventManager.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
@@ -102,15 +103,17 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	if(DGameInstance->CurrentPlatformType == EGamePlatformType::RopeBridgePlatform && !IsOnRopeBridge)
 	{
 
-		FVector PlayerVelocityNormalized = DGameInstance->PlayerCurrentVelocity.GetSafeNormal();
+		/*
+		FVector PlayerVelocityNormalized = DGameInstance->CurrentPlatformFowardVector.GetSafeNormal();
 		FRotator Rotation = PlayerVelocityNormalized.Rotation();
 		int AngleToInt = 0;
 		if(Rotation.Yaw!=0.0f)
 		{
 			AngleToInt = Rotation.Yaw / 10.0f;	
-		}
+		}*/
 		
-		Angle = AngleToInt*10.0f;
+		
+		Angle = DGameInstance->AngleToSwing;
 		
 		SetMotorPower(true);
 		PerformSwing();
@@ -144,6 +147,20 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		SetMotorPower(false);
 		IsOnRopeBridge = false;
 	}
+
+	// if(!IsRunningDebug)
+	// {
+		IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
+
+		if (XRTracking && XRTracking->IsTracking(IXRTrackingSystem::HMDDeviceId))
+		{
+			LastKnownXRCameraRotator = XRTracking->GetBaseRotation();
+		}else
+		{
+			UEventManager::LostXRHeadsetTrackingDelegate.Broadcast(LastKnownXRCameraRotator);				
+			UE_LOG(LogTemp, Warning, TEXT("VR Headset Tracking Lost"));
+		}
+	// }
 }
 
 void ADVirtuSphereControllerBasedCode::PerformAscending()

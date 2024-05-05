@@ -8,7 +8,7 @@
 #include "DCoin.h"
 #include "DRopeBridgePlatform.h"
 #include "DStandardPlatform.h"
-
+#include "SavingAndLoadingSystem.h"
 
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -27,11 +27,16 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 		MyGameInstance->ImageLevelInfo = ImageLevelData;
 		
 	}
-	
-	UTestFunctions::DeleteFileIfExists(FString("LoggedData"));
-    const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
-	UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
-	
+
+	if(not UTestFunctions::CheckIfFileExists(USavingAndLoadingInfo::DirectoryName,USavingAndLoadingInfo::FileName, USavingAndLoadingInfo::FileExtension))
+	{
+		UE_LOG(LogTemp, Error, TEXT("FILE DOESNT EXIST!"));	
+		UTestFunctions::DeleteFileIfExists(FString("LoggedInfo"),FString("LoggedData"), FString(".csv"));
+
+		const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
+		UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
+
+	}
 }	
 
 void ADMainGameModeBase::StartPlay()
@@ -228,6 +233,26 @@ TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformTy
 	}
 	
 	return ForwardStandardPlatform;
+}
+
+void ADMainGameModeBase::UpdatedCollectedAndPosition(FVector PlayerPos, int NumberOfCoinsGathered)
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		UGameInstance* GameInstance = GetGameInstance();
+
+		UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+		
+		PlayerController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(World, 0));
+		APawn* PlayerPawn  = PlayerController->GetPawn();;
+
+		PlayerPawn->SetActorLocation(PlayerPos);
+		CurrentGatheredCoins = NumberOfCoinsGathered;
+		MyGameInstance-> CurrentGatheredPoints = CurrentGatheredCoins;
+
+		OnEventLoadedUpdateUIDelegate.Broadcast();
+	}
 }
 
 void ADMainGameModeBase::CoinCollected()
