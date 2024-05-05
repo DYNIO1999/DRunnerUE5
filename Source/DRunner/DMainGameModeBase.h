@@ -71,16 +71,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Current Amount Coins")
 	int CurrentGatheredCoins;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="TestMode")
+	bool RunningInTestMode;
+
 	TSubclassOf<AActor> ChooseActorToSpawn(
 		const EGamePlatformType PlatformTypePar,
 			const EGamePlatformDirection PlatformDirectionPar,
 			const EGamePlatformMovementType MovementTypePar);
 	
 
+	UFUNCTION(BlueprintCallable, Category = "Loading saved data")
+	void UpdatedCollectedAndPosition(FVector PlayerPos, int NumberOfCoinsGathered);
+    	
 	UFUNCTION()
 	void CoinCollected();
+
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventLoadedUpdateUI);
+	
+	UPROPERTY(BlueprintAssignable, Category = "Update UI")
+	FOnEventLoadedUpdateUI OnEventLoadedUpdateUIDelegate;
+
 	
 	void SetPlayerStartLocation(float PlayerStartOffsetY);
-	
-	
 };

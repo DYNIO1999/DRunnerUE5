@@ -121,15 +121,26 @@ FString UTestFunctions::CreateColumnNames()
 	return RowToSave;
 }
 
-void UTestFunctions::DeleteFileIfExists(const FString& FileName)
+bool UTestFunctions::CheckIfFileExists(const FString& DirectoryName, const FString& FileName, const FString& Extension)
 {
 	const FString ProjectDirectory = FPaths::ProjectDir();
-	const  FString LoggingDirName{"LoggedInfo"};
-	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+LoggingDirName+TEXT("/")+(FileName+TEXT(".csv")));
+	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+DirectoryName+TEXT("/")+(FileName+Extension));
 
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	if (PlatformFile.FileExists(*PathToFile))
+	{
+		return true;
+	}
+	return false;	
+}
 
-	// Check if the file exists
+
+void UTestFunctions::DeleteFileIfExists(const FString& DirectoryName, const FString& FileName, const FString& Extension)
+{
+	const FString ProjectDirectory = FPaths::ProjectDir();
+	const FString PathToFile= FPaths::ConvertRelativePathToFull(ProjectDirectory+DirectoryName+TEXT("/")+(FileName+Extension));
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	if (PlatformFile.FileExists(*PathToFile))
 	{
 		if(PlatformFile.DeleteFile(*PathToFile))

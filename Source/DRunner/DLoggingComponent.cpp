@@ -2,6 +2,7 @@
 #include "DGameInstance.h"
 #include "TestFunctions.h"
 #include "Kismet/GameplayStatics.h"
+#include "DMainGameModeBase.h"
 
 UDLoggingComponent::UDLoggingComponent()
 {
@@ -28,8 +29,11 @@ void UDLoggingComponent::SaveLoggedData(
 	const double Now = GetWorld()->GetTimeSeconds();
 	
 	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	ADMainGameModeBase* MyGameMode = Cast<ADMainGameModeBase>(GameMode);
 	
-	if(DGameInstance)
+	if(DGameInstance &&  not MyGameMode->RunningInTestMode)
 	{
 		auto& SavedMotorStates = DGameInstance->SavedMotorStatesEvents;
 		if (SavedMotorStates.Num() >= 10)
