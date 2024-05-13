@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DGamePlatformEnums.h"
 #include "DSpawnCoinComp.generated.h"
 
 class ADCoin;
@@ -19,6 +20,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Coin To Spawn")
 	TSubclassOf<AActor> ActorToSpawn;
-	void SpawnCoinActor(const FTransform& NewCoinTransform);
+	void SpawnCoinActor(const FTransform& NewCoinTransform, const EGamePlatformType PlatformTypePar, const EGamePlatformDirection PlatformDirectionPar);
 	
 };

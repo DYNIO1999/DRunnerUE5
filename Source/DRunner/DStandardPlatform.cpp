@@ -39,16 +39,14 @@ void ADStandardPlatform::InitializePlatform(
 	PlatformType = PlatformTypePar;
 	PlatformDirection =  PlatformDirectionPar;
 	PlatformMovementType= MovementTypePar;
+	const FTransform& CoinLocalisationTransform = CoinLocalisation->GetComponentTransform();
+	CoinSpawnComponent->SpawnCoinActor(CoinLocalisationTransform, PlatformType, PlatformDirection);
 }
 
 void ADStandardPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-
-
-	const FTransform& CoinLocalisationTransform = CoinLocalisation->GetComponentTransform();
-	CoinSpawnComponent->SpawnCoinActor(CoinLocalisationTransform);
-
+	
 	MeshComp->OnComponentBeginOverlap.AddDynamic(this, &ADStandardPlatform::OnOverlapBegin);
 	MeshComp->OnComponentEndOverlap.AddDynamic(this, &ADStandardPlatform::OnOverlapEnd);
 	CanProduceLog = false;

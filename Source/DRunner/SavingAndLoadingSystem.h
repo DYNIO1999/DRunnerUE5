@@ -33,15 +33,15 @@ struct FPlayerSavedData
 	FVector3f PlayerPosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
-	int32 NumberOfGatheredCoins;
+	float NumberOfGatheredCoins;
 
 	FPlayerSavedData()
-		: PlayerPosition(-1.0f, -1.0f, -1.0f), NumberOfGatheredCoins(-1)
+		: PlayerPosition(-1.0f, -1.0f, -1.0f), NumberOfGatheredCoins(-1.0f)
 	{
 		
 	}
 
-	FPlayerSavedData(const FVector& Position, const int Coins)
+	FPlayerSavedData(const FVector& Position, const float Coins)
 		: PlayerPosition(Position), NumberOfGatheredCoins(Coins)
 	{
 		

@@ -19,9 +19,9 @@ public:
 	UDGameInstance();
 	
 	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
-	int MaxPointsToGather;
+	float MaxPointsToGather;
 	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
-	int CurrentGatheredPoints;
+	float CurrentGatheredPoints;
 
 	UPROPERTY(BlueprintReadWrite, Category="Image Level Data")
 	FUImageLevelData ImageLevelInfo;

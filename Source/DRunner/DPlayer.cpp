@@ -1,4 +1,6 @@
 #include "DPlayer.h"
+
+#include "DCoin.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
@@ -9,6 +11,7 @@
 #include "DrawDebugHelpers.h"
 #include "EventManager.h"
 #include "IXRTrackingSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 ADPlayer::ADPlayer()
 {
@@ -88,6 +91,16 @@ void ADPlayer::Tick(float DeltaTime)
 		}
 		PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
 	}
+
+	// TArray<AActor*> FoundCoins;
+	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
+	//
+	// for(int i = 0; i < FoundCoins.Num(); i++)
+	// {
+	// 	ADCoin* CoinObjectPtr = Cast<ADCoin>(FoundCoins[i]);
+	// 	FVector CoinLocation = CoinObjectPtr->GetActorLocation();
+	// }
+	// //check for closer platform 
 	
 }
 

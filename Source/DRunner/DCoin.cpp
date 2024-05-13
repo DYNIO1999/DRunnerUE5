@@ -1,14 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "DCoin.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
-
 #include "EventManager.h"
-
 #include "DPlayer.h"
-// Sets default values
+#include "Camera/CameraComponent.h"
+
 ADCoin::ADCoin()
 {
 
@@ -20,11 +16,12 @@ ADCoin::ADCoin()
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComp->SetupAttachment(RootComponent);
 
-	PrimaryActorTick.bCanEverTick = true;
+	CoinID = -1;
+	AllowedOffsetLimit = 0.1f;
 
+	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void ADCoin::BeginPlay()
 {
 	Super::BeginPlay();
@@ -32,11 +29,17 @@ void ADCoin::BeginPlay()
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ADCoin::OnOverlapBegin);
 }
 
-// Called every frame
 void ADCoin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ADCoin::Initialize(const int32 ID, const EGamePlatformType PlatformTypePar, const EGamePlatformDirection PlatformDirectionPar)
+{
+	CoinID = ID;
+	PlatformType = PlatformTypePar;
+	PlatformDirection=  PlatformDirectionPar;
 }
 
 void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -44,15 +47,64 @@ void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 
 	if (OtherActor && OtherActor != this && OtherActor->IsA(ADPlayer::StaticClass()))
 	{
-		SendInfoGathered();
+
+		FVector PlayerFowardVector;
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			ACharacter* PlayerCharacter = Cast<ACharacter>(PlayerController->GetPawn());
+			if (PlayerCharacter)
+			{
+				UCameraComponent* CameraComponent = PlayerCharacter->FindComponentByClass<UCameraComponent>();
+				if (CameraComponent)
+				{
+					PlayerFowardVector = CameraComponent->GetForwardVector();
+					
+				}
+			}
+		}
+
+		const FVector  PlatformForwardDir= FVector(1.0,0.0,0.0);
+		float Angle = GetAngleBasedOnPlatformDirection(PlatformType, PlatformDirection);
+
+		if (PlatformType == EGamePlatformType::RightPlatform)
+		{
+			Angle+=90.0f;
+		}else if(PlatformType == EGamePlatformType::LeftPlatform)
+		{
+			Angle-=90.0f;
+		}
+		FRotator NewRotator(0.f, Angle, 0.f);
+		FVector RotatedVector = NewRotator.RotateVector(PlatformForwardDir);
+
+
+		//UE_LOG(LogTemp, Error, TEXT("ANGLE :%d"), static_cast<int>(PlatformType));
+		//UE_LOG(LogTemp, Error, TEXT("ROTATED VECTOR X:%f, Y:%f, Z:%f"), RotatedVector.X,RotatedVector.Y, RotatedVector.Z);
+		
+		const FVector ResultVector = FVector::CrossProduct(PlayerFowardVector, RotatedVector);
+		
+		if( ResultVector.Z < AllowedOffsetLimit  && ResultVector.Z >-AllowedOffsetLimit){
+			//UE_LOG(LogTemp, Error, TEXT("OKAY MIDDLE X:%f, Y:%f, Z:%f"), ResultVector.X,ResultVector.Y, ResultVector.Z);
+
+			//UE_LOG(LogTemp, Error, TEXT("MIDDLE"));
+			SendInfoGathered(1.0f);
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Error, TEXT("NOT MIDDLE X:%f, Y:%f, Z:%f"), ResultVector.X,ResultVector.Y, ResultVector.Z);
+
+			SendInfoGathered(0.5f);
+		}
+		
 		Destroy();
+		
 	}
 
 }
 
-void ADCoin::SendInfoGathered() const
+void ADCoin::SendInfoGathered(const float MultiplayerPerPoint) const
 {
-	OnEventGathered.Broadcast();
+	OnEventGathered.Broadcast(MultiplayerPerPoint);
 
 	if(UEventManager::PlaySoundGatheredDelegate.IsBound())
 	{

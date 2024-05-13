@@ -9,7 +9,7 @@
 #include "DRopeBridgePlatform.h"
 #include "DStandardPlatform.h"
 #include "SavingAndLoadingSystem.h"
-
+#include "IDManager.h"
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -37,6 +37,8 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 		UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
 
 	}
+
+	UIDManager::ResetID();
 }	
 
 void ADMainGameModeBase::StartPlay()
@@ -235,7 +237,7 @@ TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformTy
 	return ForwardStandardPlatform;
 }
 
-void ADMainGameModeBase::UpdatedCollectedAndPosition(FVector PlayerPos, int NumberOfCoinsGathered)
+void ADMainGameModeBase::UpdatedCollectedAndPosition(FVector PlayerPos, float NumberOfCoinsGathered)
 {
 	UWorld* World = GetWorld();
 	if (World)
@@ -255,10 +257,10 @@ void ADMainGameModeBase::UpdatedCollectedAndPosition(FVector PlayerPos, int Numb
 	}
 }
 
-void ADMainGameModeBase::CoinCollected()
+void ADMainGameModeBase::CoinCollected(float MultiplayerPerPoint)
 {
-	CurrentGatheredCoins++;
-	UE_LOG(LogTemp, Warning, TEXT("Coin Gathered %d"), CurrentGatheredCoins);
+	CurrentGatheredCoins += MultiplayerPerPoint*1.0f;
+	//UE_LOG(LogTemp, Warning, TEXT("Coin Gathered %d"), CurrentGatheredCoins);
 	UGameInstance* GameInstance = GetGameInstance();
 
 	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
