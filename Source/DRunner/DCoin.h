@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DGamePlatformEnums.h"
 #include "GameFramework/Actor.h"
 #include "DCoin.generated.h"
 
@@ -24,10 +25,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventTriggered);
+	void Initialize(const int32 ID, const EGamePlatformType PlatformTypePar, const EGamePlatformDirection PlatformDirectionPar);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEventTriggered,float, MultiplayerGainPerPoint);
 	
 	UPROPERTY(BlueprintAssignable, Category = "EventGathered")
 	FOnEventTriggered OnEventGathered;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Limit")
+	float AllowedOffsetLimit;
 
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -39,6 +46,17 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	void SendInfoGathered() const;
+	void SendInfoGathered(const float MultiplayerPerPoint) const;
 
+	UPROPERTY()
+	int32 CoinID;
+
+	UPROPERTY()
+	FVector ForwardDirectionBasedOnPlatform;
+
+	UPROPERTY()
+	EGamePlatformType PlatformType;
+	UPROPERTY()
+	EGamePlatformDirection PlatformDirection;
+	
 };

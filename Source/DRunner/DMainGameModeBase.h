@@ -66,10 +66,10 @@ public:
 	virtual void StartPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Maximum Coins")
-	int MaxCoinsOnLevel;
+	float MaxCoinsOnLevel;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Current Amount Coins")
-	int CurrentGatheredCoins;
+	float CurrentGatheredCoins;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="TestMode")
 	bool RunningInTestMode;
@@ -81,10 +81,10 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable, Category = "Loading saved data")
-	void UpdatedCollectedAndPosition(FVector PlayerPos, int NumberOfCoinsGathered);
+	void UpdatedCollectedAndPosition(FVector PlayerPos, float NumberOfCoinsGathered);
     	
 	UFUNCTION()
-	void CoinCollected();
+	void CoinCollected(float MultiplayerPerPoint);
 
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventLoadedUpdateUI);

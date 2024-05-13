@@ -12,5 +12,5 @@ class DRUNNER_API UEventManager : public UObject
 public:
 	
 	static FGenerateAudioGathered PlaySoundGatheredDelegate;
-	static FOnLostXRHeadsetTracking LostXRHeadsetTrackingDelegate;  
+	static FOnLostXRHeadsetTracking LostXRHeadsetTrackingDelegate;
 };
