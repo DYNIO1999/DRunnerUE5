@@ -1,4 +1,5 @@
 #include "DGameInstance.h"
+#include "EventManager.h"
 
 UDGameInstance::UDGameInstance()
 {
@@ -19,4 +20,31 @@ UDGameInstance::UDGameInstance()
 	CurrentWindDirection=FVector::Zero();
 	
 	CurrentPlatformType = EGamePlatformType::None;
+
+	
+	GatheredFromDirection = EGameGatheredFromDirection::Unspecified;
+	CurrentCoinId = 0;
+	
 }
+
+void UDGameInstance::Init()
+{
+	Super::Init();
+
+	UEventManager::CoinGatheredFromDirectionDelegate.AddDynamic(this, &UDGameInstance::GetGatheredCoinDirection);	
+	
+}
+
+void UDGameInstance::ResetCoinDirectionAndID()
+{
+	CurrentCoinId = 0;
+	GatheredFromDirection = EGameGatheredFromDirection::Unspecified;
+
+}
+
+void UDGameInstance::GetGatheredCoinDirection(EGameGatheredFromDirection GatheredDir, int32 CoinID)
+{
+	GatheredFromDirection = GatheredDir;
+	CurrentCoinId = CoinID;
+}
+

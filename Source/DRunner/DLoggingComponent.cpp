@@ -63,6 +63,7 @@ void UDLoggingComponent::SaveLoggedData(
 					UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);	
 				}
 			}
+			DGameInstance->ResetCoinDirectionAndID();
 			SavedMotorStates.Reset();
 		}
 	}

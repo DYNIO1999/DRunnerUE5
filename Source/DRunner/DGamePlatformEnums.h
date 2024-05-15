@@ -45,6 +45,15 @@ enum class EGameUsedLeg : uint8
 	Right = 1 UMETA(DisplayName = "Right")
 };
 
+UENUM(BlueprintType) 
+enum class EGameGatheredFromDirection : uint8
+{
+	Unspecified = 0  UMETA(DisplayName = "Unspecified"),
+	Middle = 1  UMETA(DisplayName = "Midlle"),
+	Left = 2 UMETA(DisplayName = "Left"),
+	Right = 3 UMETA(DisplayName = "Right")
+};
+
 static EGamePlatformType CheckPlatformType(const uint8 Value)
 {
 	EGamePlatformType PlatformTypeVal; 

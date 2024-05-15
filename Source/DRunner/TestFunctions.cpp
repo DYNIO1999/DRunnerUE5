@@ -85,9 +85,13 @@ FString UTestFunctions::PreProcessLogData(
 	const FVector& PlayerPosition,
 	const FRotator& PlayerRotation,
 	const FMotorStateEvent& MotorState,
-	const int CurrentLeg)
+	const int CurrentLeg,
+	const int GatheredFromDirection,
+	const int CoinID,
+
+	)
 {
-	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f,%d\n"),
+	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d\n"),
 		CurrentTime,
 		PlatformType,
 		PlatformDirection,
@@ -110,7 +114,9 @@ FString UTestFunctions::PreProcessLogData(
 		MotorState.motorVelocity,
 		MotorState.motorVoltage,
 		MotorState.motorCurrent,
-		CurrentLeg);
+		CurrentLeg,
+		
+		);
 
 	return RowToSave;
 }

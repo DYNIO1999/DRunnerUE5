@@ -17,6 +17,8 @@ class DRUNNER_API UDGameInstance : public UGameInstance
 public:
 
 	UDGameInstance();
+
+	virtual void Init() override;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
 	float MaxPointsToGather;
@@ -75,4 +77,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	EGameUsedLeg CurrentPlayerLeg;
+
+	UPROPERTY(BlueprintReadWrite)
+	EGameGatheredFromDirection GatheredFromDirection;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 CurrentCoinId;
+
+	void ResetCoinDirectionAndID();
+private:
+	UFUNCTION()
+	void GetGatheredCoinDirection(EGameGatheredFromDirection GatheredDir, int32 CoinID);
 };

@@ -3,6 +3,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "EventManager.h"
 #include "DPlayer.h"
+#include "DGamePlatformEnums.h"
 #include "Camera/CameraComponent.h"
 
 ADCoin::ADCoin()
@@ -102,9 +103,10 @@ void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 
 }
 
-void ADCoin::SendInfoGathered(const float MultiplayerPerPoint) const
+void ADCoin::SendInfoGathered(const float MultiplayerPerPoint, ) const
 {
 	OnEventGathered.Broadcast(MultiplayerPerPoint);
+	UEventManager::CoinGatheredFromDirectionDelegate.Broadcast();
 
 	if(UEventManager::PlaySoundGatheredDelegate.IsBound())
 	{
