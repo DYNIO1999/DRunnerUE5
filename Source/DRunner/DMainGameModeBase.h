@@ -86,7 +86,11 @@ public:
 	UFUNCTION()
 	void CoinCollected(float MultiplayerPerPoint);
 
-
+	UFUNCTION()
+	void HandleLoadingPlayerInfo();
+	UFUNCTION()
+	void HandleSavingPlayerInfo();
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEventLoadedUpdateUI);
 	
 	UPROPERTY(BlueprintAssignable, Category = "Update UI")
@@ -94,4 +98,5 @@ public:
 
 	
 	void SetPlayerStartLocation(float PlayerStartOffsetY);
+	
 };

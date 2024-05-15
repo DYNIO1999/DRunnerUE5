@@ -9,6 +9,7 @@
 #include "DRopeBridgePlatform.h"
 #include "DStandardPlatform.h"
 #include "SavingAndLoadingSystem.h"
+#include "EventManager.h"
 #include "IDManager.h"
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -198,6 +199,9 @@ void ADMainGameModeBase::StartPlay()
 	}
 	
 	SetPlayerStartLocation(PlayerStartYOffset);
+
+	UEventManager::PerformSavingPlayerInfoDelegate.AddDynamic(this, &ADMainGameModeBase::HandleSavingPlayerInfo);
+	UEventManager::PerformLoadingPlayerInfoDelegate.AddDynamic(this, &ADMainGameModeBase::HandleLoadingPlayerInfo);
 }
 
 
@@ -293,4 +297,31 @@ void ADMainGameModeBase::SetPlayerStartLocation(float PlayerStartOffsetY)
 		ActorLocation+=FVector(0,PlayerStartOffsetY, 0.0f);
 		PlayerPawn->SetActorLocation(ActorLocation);
 	}
+}
+
+void ADMainGameModeBase::HandleLoadingPlayerInfo()
+{
+	FString FileName = USavingAndLoadingInfo::GetFileName();
+	FString DirectoryName = USavingAndLoadingInfo::GetDirectoryName();
+	FString FileExtension = USavingAndLoadingInfo::GetFileExtension();
+	if(UTestFunctions::CheckIfFileExists(DirectoryName, FileName, FileExtension))
+	{
+		const FPlayerSavedData PlayerSavedData = USavingAndLoadingSystem::LoadPlayerInfo(DirectoryName, FileName);
+		
+		UpdatedCollectedAndPosition(PlayerSavedData.PlayerPosition, PlayerSavedData.NumberOfGatheredCoins);
+		
+	}
+}
+
+void ADMainGameModeBase::HandleSavingPlayerInfo()
+{
+	FString DirectoryName = USavingAndLoadingInfo::GetDirectoryName();
+	FString FileName = USavingAndLoadingInfo::GetFileName();
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+
+	FPlayerSavedData PlayInfo(MyGameInstance->PlayerCurrentPosition, MyGameInstance->CurrentGatheredPoints);
+	
+	USavingAndLoadingSystem::SavePlayerInfo(DirectoryName, FileName, PlayInfo);
 }

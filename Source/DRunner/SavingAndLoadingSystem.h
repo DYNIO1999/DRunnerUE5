@@ -30,7 +30,7 @@ struct FPlayerSavedData
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
-	FVector3f PlayerPosition;
+	FVector PlayerPosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
 	float NumberOfGatheredCoins;

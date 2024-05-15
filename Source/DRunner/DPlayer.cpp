@@ -10,8 +10,7 @@
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
 #include "EventManager.h"
-#include "IXRTrackingSystem.h"
-#include "Kismet/GameplayStatics.h"
+
 
 ADPlayer::ADPlayer()
 {
@@ -91,6 +90,8 @@ void ADPlayer::Tick(float DeltaTime)
 		}
 		PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
 	}
+	
+	
 
 	// TArray<AActor*> FoundCoins;
 	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
@@ -119,7 +120,7 @@ void ADPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	Subsystem->ClearAllMappings();
 	Subsystem->AddMappingContext(DefaultInputMapping, 0);
-
+	
 	UEnhancedInputComponent* InputComp = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	InputComp->BindAction(InputMove, ETriggerEvent::Triggered, this, &ADPlayer::Walk);
@@ -127,7 +128,9 @@ void ADPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComp->BindAction(InputRun, ETriggerEvent::Started, this, &ADPlayer::StartRunning);
 	InputComp->BindAction(InputRun, ETriggerEvent::Completed, this, &ADPlayer::StopRunning);
 	InputComp->BindAction(InputJump, ETriggerEvent::Triggered, this, &ADPlayer::StartJump);
-
+	
+	InputComp->BindAction(InputLoadPlayerInfo, ETriggerEvent::Completed, this, &ADPlayer::PressedLoadPlayerInfo);
+	InputComp->BindAction(InputSavePlayerInfo, ETriggerEvent::Completed, this, &ADPlayer::PressedSavePlayerInfo);
 }
 
 void ADPlayer::Walk(const FInputActionValue& InputValue)
@@ -185,6 +188,18 @@ void ADPlayer::StopRunning()
 {
 	CurrentCharacterSpeed = CharacterWalkSpeed;
 	ChangeSpeedValue(CurrentCharacterSpeed);
+}
+
+void ADPlayer::PressedLoadPlayerInfo()
+{
+	UE_LOG(LogTemp, Error, TEXT("PRESSED LOAD PLAYER INFO"));
+	UEventManager::PerformLoadingPlayerInfoDelegate.Broadcast();
+}
+
+void ADPlayer::PressedSavePlayerInfo()
+{
+	UE_LOG(LogTemp, Error, TEXT("PRESSED SAVED PLAYER INFO"));
+	UEventManager::PerformSavingPlayerInfoDelegate.Broadcast();
 }
 
 void ADPlayer::SavePlayerData()

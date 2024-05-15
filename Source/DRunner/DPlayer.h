@@ -75,7 +75,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputAction* InputJump;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UInputAction* InputLoadPlayerInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UInputAction* InputSavePlayerInfo;
+
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UCameraComponent> CameraComp;
 		
@@ -102,7 +108,9 @@ public:
 	void StartRunning();
 	void StartJump();
 	void StopRunning();
-
+	void PressedLoadPlayerInfo();
+	void PressedSavePlayerInfo();
+	
 	UPROPERTY()
 	FTimerHandle PlayerDataSavingTimer;
 	
