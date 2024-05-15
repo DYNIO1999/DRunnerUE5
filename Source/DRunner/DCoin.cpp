@@ -79,22 +79,22 @@ void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 		FVector RotatedVector = NewRotator.RotateVector(PlatformForwardDir);
 
 
-		//UE_LOG(LogTemp, Error, TEXT("ANGLE :%d"), static_cast<int>(PlatformType));
-		//UE_LOG(LogTemp, Error, TEXT("ROTATED VECTOR X:%f, Y:%f, Z:%f"), RotatedVector.X,RotatedVector.Y, RotatedVector.Z);
-		
 		const FVector ResultVector = FVector::CrossProduct(PlayerFowardVector, RotatedVector);
-		
+				
 		if( ResultVector.Z < AllowedOffsetLimit  && ResultVector.Z >-AllowedOffsetLimit){
 			//UE_LOG(LogTemp, Error, TEXT("OKAY MIDDLE X:%f, Y:%f, Z:%f"), ResultVector.X,ResultVector.Y, ResultVector.Z);
-
-			//UE_LOG(LogTemp, Error, TEXT("MIDDLE"));
-			SendInfoGathered(1.0f);
+			SendInfoGathered(1.0f, EGameGatheredFromDirection::Middle, CoinID);
 		}
-		else
+		else if(ResultVector.Z > AllowedOffsetLimit)
 		{
-			//UE_LOG(LogTemp, Error, TEXT("NOT MIDDLE X:%f, Y:%f, Z:%f"), ResultVector.X,ResultVector.Y, ResultVector.Z);
 
-			SendInfoGathered(0.5f);
+			SendInfoGathered(0.5f, EGameGatheredFromDirection::Right, CoinID);
+			//UE_LOG(LogTemp, Error, TEXT("RIGHT"));
+
+		}else
+		{
+			SendInfoGathered(0.5f, EGameGatheredFromDirection::Left, CoinID);
+			//UE_LOG(LogTemp, Error, TEXT("LEFT"));
 		}
 		
 		Destroy();
@@ -103,10 +103,10 @@ void ADCoin::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 
 }
 
-void ADCoin::SendInfoGathered(const float MultiplayerPerPoint, ) const
+void ADCoin::SendInfoGathered(const float MultiplayerPerPoint, const EGameGatheredFromDirection GatheredFromDirection, const int32 ID) const
 {
 	OnEventGathered.Broadcast(MultiplayerPerPoint);
-	UEventManager::CoinGatheredFromDirectionDelegate.Broadcast();
+	UEventManager::CoinGatheredFromDirectionDelegate.Broadcast(GatheredFromDirection, ID);
 
 	if(UEventManager::PlaySoundGatheredDelegate.IsBound())
 	{
