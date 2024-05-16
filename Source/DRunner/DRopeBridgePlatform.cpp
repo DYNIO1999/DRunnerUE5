@@ -192,7 +192,11 @@ void ADRopeBridgePlatform::Tick(float DeltaTime)
 		if (PlatformMovementType == EGamePlatformMovementType::Running)
 		{
 			WindSpeed = RunningSpeed;
-		}else
+		}else if(PlatformMovementType == EGamePlatformMovementType::Jogging)
+		{
+			WindSpeed = JoggingSpeed;
+		}
+		else
 		{
 			WindSpeed = WalkSpeed;
 		}

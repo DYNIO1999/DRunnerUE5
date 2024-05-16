@@ -81,6 +81,12 @@ void ADPlayer::Tick(float DeltaTime)
 			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);		
 
 			
+		}else if(DGameInstanceRef->CurrentPlatformMovementType == EGamePlatformMovementType::Jogging)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
+			ChangeLegCooldown = RunningLegCooldown;
+			DGameInstanceRef->ChangeLegCooldown = ChangeLegCooldown;	
+			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
 		}else
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);

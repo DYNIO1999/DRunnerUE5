@@ -123,6 +123,9 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
 	float RunningLegCooldown;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
+	float JoggingLegCooldown;
+
 	UPROPERTY()
 	FTimerHandle ChangeLegCooldownTimer;
 	

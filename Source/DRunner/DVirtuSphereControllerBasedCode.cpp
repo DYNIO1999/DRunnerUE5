@@ -1,5 +1,6 @@
 #include "DVirtuSphereControllerBasedCode.h"
 #include "EventManager.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
@@ -148,8 +149,11 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		IsOnRopeBridge = false;
 	}
 
+	//UHeadMountedDisplayFunctionLibrary::Get
 	// if(!IsRunningDebug)
 	// {
+	
+	//if (UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition(CurrentOrientation, CurrentPosition))
 		IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
 
 		if (XRTracking && XRTracking->IsTracking(IXRTrackingSystem::HMDDeviceId))

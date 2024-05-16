@@ -44,6 +44,9 @@ public:
 	float RunningSpeed;
 
 	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
+	float JoggingSpeed;
+	
+	UPROPERTY(EditAnywhere, Category = "Rope Bridge")
 	float WalkSpeed;
 	
 	float RotationCooldown;

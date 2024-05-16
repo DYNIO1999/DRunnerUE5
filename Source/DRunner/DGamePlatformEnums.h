@@ -34,7 +34,8 @@ enum class EGamePlatformMovementType : uint8
 {
 	None = 255 UMETA(DisplayName = "None"),
 	Running = 0 UMETA(DisplayName = "Running"),
-	Walking = 125 UMETA(DisplayName = "Walking"),
+	Jogging = 100 UMETA(DisplayName = "Jogging"),
+	Walking = 200  UMETA(DisplayName = "Walking"),
 	SpawnPoint = 250 UMETA(DisplayName = "SpawnPoint")
 };
 
@@ -161,6 +162,12 @@ static EGamePlatformMovementType CheckPlatformMovementType(const uint8 Value)
 		PlatformMovementType= EGamePlatformMovementType::Running;
 		break;
 
+		case static_cast<int>(EGamePlatformMovementType::Jogging):
+
+		PlatformMovementType= EGamePlatformMovementType::Jogging;
+		break;
+
+		
 		case static_cast<int>(EGamePlatformMovementType::SpawnPoint):
 
 		PlatformMovementType= EGamePlatformMovementType::SpawnPoint;
