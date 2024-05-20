@@ -5,9 +5,9 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGenerateAudioGathered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPerformSavingPlayerInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPerformLoadingPlayerInfo);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLostXRHeadsetTracking,FRotator, NewRotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRegainXRHeadsetTracking);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLostXRHeadsetTracking,FQuat,LastQuat);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDetectedCoinGatheredFromDirection, EGameGatheredFromDirection,GatheredFromDirection,int32, CoinID);
-
 
 UCLASS()
 class DRUNNER_API UEventManager : public UObject
@@ -16,6 +16,7 @@ class DRUNNER_API UEventManager : public UObject
 public:
 	static FGenerateAudioGathered PlaySoundGatheredDelegate;
 	static FOnLostXRHeadsetTracking LostXRHeadsetTrackingDelegate;
+	static FOnRegainXRHeadsetTracking RegainXRHeadsetTrackingDelegate;
 
 	static FOnPerformSavingPlayerInfo PerformSavingPlayerInfoDelegate;
 	static FOnPerformLoadingPlayerInfo PerformLoadingPlayerInfoDelegate;

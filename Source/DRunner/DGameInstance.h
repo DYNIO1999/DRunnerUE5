@@ -20,6 +20,7 @@ public:
 
 	virtual void Init() override;
 	
+	
 	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
 	float MaxPointsToGather;
 	UPROPERTY(BlueprintReadWrite, Category = "LevelSettings")
@@ -84,6 +85,10 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int32 CurrentCoinId;
 
+
+	UPROPERTY(BlueprintReadWrite)
+	EGameMaps CurrentMap;
+	
 	void ResetCoinDirectionAndID();
 private:
 	UFUNCTION()

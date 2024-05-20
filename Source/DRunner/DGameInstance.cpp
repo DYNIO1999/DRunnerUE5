@@ -24,7 +24,8 @@ UDGameInstance::UDGameInstance()
 	
 	GatheredFromDirection = EGameGatheredFromDirection::Unspecified;
 	CurrentCoinId = 0;
-	
+
+	CurrentMap = EGameMaps::TestMap;
 }
 
 void UDGameInstance::Init()

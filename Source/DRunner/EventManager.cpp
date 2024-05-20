@@ -5,3 +5,4 @@ FOnLostXRHeadsetTracking UEventManager::LostXRHeadsetTrackingDelegate;
 FOnDetectedCoinGatheredFromDirection UEventManager::CoinGatheredFromDirectionDelegate;
 FOnPerformSavingPlayerInfo UEventManager::PerformSavingPlayerInfoDelegate;
 FOnPerformLoadingPlayerInfo UEventManager::PerformLoadingPlayerInfoDelegate;
+FOnRegainXRHeadsetTracking UEventManager::RegainXRHeadsetTrackingDelegate;

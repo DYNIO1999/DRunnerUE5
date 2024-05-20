@@ -1,6 +1,6 @@
 #include "DVirtuSphereControllerBasedCode.h"
 #include "EventManager.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
+#include "IXRTrackingSystem.h"
 
 void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	Super::BeginPlay();
@@ -9,6 +9,7 @@ void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	IsMotorPowerEnabled = false;
 	IsUsingUpAndDowMotor = false;
 	IsOnRopeBridge = false;
+	LostTracking = false;
 
 	Connect();
 }
@@ -149,22 +150,25 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 		IsOnRopeBridge = false;
 	}
 
-	//UHeadMountedDisplayFunctionLibrary::Get
-	// if(!IsRunningDebug)
-	// {
 	
-	//if (UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition(CurrentOrientation, CurrentPosition))
-		IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
+	FQuat TrackingQuat;
+	FVector TrackingVector;
 
-		if (XRTracking && XRTracking->IsTracking(IXRTrackingSystem::HMDDeviceId))
+	IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
+
+	if(XRTracking)
+	{
+		if (XRTracking->GetCurrentPose(0, TrackingQuat, TrackingVector) && (TrackingQuat != FQuat::Identity && TrackingVector != FVector::ZeroVector))
 		{
-			LastKnownXRCameraRotator = XRTracking->GetBaseRotation();
+			PreviousFrameTrackingQuat = LastFrameTrackingQuat;
+			LastFrameTrackingQuat = TrackingQuat;
+			XRTracking->GetCurrentPose(0, LastFrameTrackingQuat, LastKnownBasePosition);
+			UEventManager::RegainXRHeadsetTrackingDelegate.Broadcast();
 		}else
 		{
-			UEventManager::LostXRHeadsetTrackingDelegate.Broadcast(LastKnownXRCameraRotator);				
-			UE_LOG(LogTemp, Warning, TEXT("VR Headset Tracking Lost"));
+			UEventManager::LostXRHeadsetTrackingDelegate.Broadcast(PreviousFrameTrackingQuat);
 		}
-	// }
+	}
 }
 
 void ADVirtuSphereControllerBasedCode::PerformAscending()

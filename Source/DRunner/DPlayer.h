@@ -14,6 +14,7 @@ class USpringArmComponent;
 class USphereComponent;
 class UAudioComponent;
 class UDGameInstance;
+class UBoxComponent;
 
 UCLASS()
 class DRUNNER_API ADPlayer : public ACharacter
@@ -28,13 +29,14 @@ protected:
 
 public:
 
+	UFUNCTION()
+	void HandleLostTrackingOnXRHeadset(FQuat LastQuat);
+	
+	UFUNCTION()
+	void HandleRegainTrackingOnXRHeadset();
 	
 	UFUNCTION()
 	void PlayPickedUpCoinSound();
-
-	UFUNCTION()
-	void HandleLostTrackingOnXRHeadset(FRotator NewRotation);
-
 	
 	UPROPERTY(EditAnywhere, Category="Player VituSphere Movement")
 	FVector PlayerVirtuSphereMovement;
@@ -102,7 +104,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Legs")
 	EGamePlatformMovementType PreviousPlatformMovementType;
-
+	
 	void Walk(const FInputActionValue& InputValue);
 	void Look(const FInputActionValue& InputValue);
 	void StartRunning();
@@ -135,6 +137,8 @@ public:
 
 	UPROPERTY()
 	UDGameInstance* DGameInstanceRef;
+
+	
 	
 private:
 	UPROPERTY()
@@ -144,5 +148,9 @@ private:
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComp;
 	
 	void ChangeSpeedValue(float SpeedValue) const;
+
+	bool LostTracking;
+
+	FQuat LastKnownQuat;
 	
 };

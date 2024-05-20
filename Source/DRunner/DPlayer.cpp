@@ -10,6 +10,7 @@
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
 #include "EventManager.h"
+#include "Components/BoxComponent.h"
 
 
 ADPlayer::ADPlayer()
@@ -35,7 +36,7 @@ ADPlayer::ADPlayer()
 
 	PlayerPickedUpAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerPickedUpAudio"));
 	PlayerPickedUpAudio->SetupAttachment(RootComponent);
-
+	
 	PlayerPickedUpAudio->bAutoActivate = false;
 }
 
@@ -60,6 +61,7 @@ void ADPlayer::BeginPlay()
 
 	UEventManager::PlaySoundGatheredDelegate.AddDynamic(this, &ADPlayer::PlayPickedUpCoinSound);
 	UEventManager::LostXRHeadsetTrackingDelegate.AddDynamic(this, &ADPlayer::HandleLostTrackingOnXRHeadset);
+	UEventManager::RegainXRHeadsetTrackingDelegate.AddDynamic(this, &ADPlayer::HandleRegainTrackingOnXRHeadset);
 	
 }
 
@@ -84,7 +86,7 @@ void ADPlayer::Tick(float DeltaTime)
 		}else if(DGameInstanceRef->CurrentPlatformMovementType == EGamePlatformMovementType::Jogging)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
-			ChangeLegCooldown = RunningLegCooldown;
+			ChangeLegCooldown = JoggingLegCooldown;
 			DGameInstanceRef->ChangeLegCooldown = ChangeLegCooldown;	
 			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
 		}else
@@ -96,7 +98,11 @@ void ADPlayer::Tick(float DeltaTime)
 		}
 		PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
 	}
-	
+
+	if (LostTracking) {
+		CameraComp->SetRelativeRotation(LastKnownQuat);
+		//UE_LOG(LogTemp, Warning, TEXT("SETTING LOST ROTATION"));
+	}
 	
 
 	// TArray<AActor*> FoundCoins;
@@ -249,16 +255,25 @@ void ADPlayer::PlayPickedUpCoinSound()
 	PlayerPickedUpAudio->Play();
 }
 
-void ADPlayer::HandleLostTrackingOnXRHeadset(FRotator NewRotation)
-{
-	
-	CameraComp->SetRelativeRotation(NewRotation);
-}
 
 void ADPlayer::ChangeSpeedValue(float SpeedValue) const
 {
 	CharacterMovementComp->MaxWalkSpeed = SpeedValue;
 }
+void ADPlayer::HandleLostTrackingOnXRHeadset(FQuat LastQuat)
+{
+	LostTracking = true;
+	LastKnownQuat = LastQuat;
+	//LostTracking = true;
+	//LostTrackedRotation = NewRotation;
+	//UE_LOG(LogTemp, Error, TEXT("LOST TRACKING ROTATOR %f %f %f"), NewRotation.Pitch, NewRotation.Yaw, NewRotation.Roll);
+	CameraComp->bLockToHmd = 0;
 
+}
+
+void ADPlayer::HandleRegainTrackingOnXRHeadset() {
+	LostTracking = false;
+	CameraComp->bLockToHmd = 1;
+}
 
 

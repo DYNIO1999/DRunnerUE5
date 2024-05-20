@@ -238,13 +238,11 @@ void ADRopeBridgePlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 		{
 			Plank->SetRelativeRotation(FRotator(0.0f,0.0f, 0.0f));
 		}
-
 		if(WaterAmbientSound->IsPlaying())
 		{
 			WaterAmbientSound->Stop();
 		}
 	}
-	
 }
 
 void ADRopeBridgePlatform::SwapRotation()
@@ -292,8 +290,6 @@ void ADRopeBridgePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 		{
 			WaterAmbientSound->Play();
 		}
-		
-		
 		GetWorldTimerManager().SetTimer(LoggingCooldown, this, &ADRopeBridgePlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}
 }

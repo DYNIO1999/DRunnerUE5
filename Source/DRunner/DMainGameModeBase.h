@@ -36,7 +36,7 @@ class DRUNNER_API ADMainGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
-
+	
 	UPROPERTY()
 	APlayerController* PlayerController;
 	
@@ -57,6 +57,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
 	TSubclassOf<AActor> RopeBridgePlatformRef;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Platforms Actors")
+	TSubclassOf<AActor> EndPointPlatformRef;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Image File Name")
 	FString ImageFileName;
@@ -98,5 +101,7 @@ public:
 
 	
 	void SetPlayerStartLocation(float PlayerStartOffsetY);
+
+	bool UpdatePlayerAfterLoading;
 	
 };

@@ -16,7 +16,8 @@ enum class EGamePlatformType : uint8
 	Descending = 100 UMETA(DisplayName = "Descending"),
 	RightPlatform =  150 UMETA(DisplayName = "RightPlatform"),
 	LeftPlatform = 175 UMETA(DisplayName = "LeftPlatform"),
-	RopeBridgePlatform = 200 UMETA(DisplayName = "RopeBridgePlatform")
+	RopeBridgePlatform = 200 UMETA(DisplayName = "RopeBridgePlatform"),
+	EndPointPlatform = 230 UMETA(DisplayName = "EndPointPlatform"),
 };
 
 UENUM(BlueprintType) 
@@ -55,6 +56,46 @@ enum class EGameGatheredFromDirection : uint8
 	Right = 3 UMETA(DisplayName = "Right")
 };
 
+UENUM(BlueprintType) 
+enum class EGameMaps : uint8
+{
+	TestMap = 0  UMETA(DisplayName = "TestMap"),
+	MainMap = 1  UMETA(DisplayName = "MainMap"),
+};
+
+static FString GetMapName(EGameMaps MapValue)
+{
+	FString MapName = "TestMap";
+
+	switch (MapValue)
+	{
+	case EGameMaps::TestMap:
+		MapName = "TestMap";
+		break;
+	case EGameMaps::MainMap:
+		MapName = "MainMap";
+		break;
+	}
+
+	return MapName;
+}
+
+static EGameMaps GetMapEnumValue(const FString& MapName)
+{
+	if (MapName == "TestMap")
+	{
+		return EGameMaps::TestMap;
+	}
+	else if (MapName == "MainMap")
+	{
+		return EGameMaps::MainMap;
+	}
+	else
+	{
+		return EGameMaps::TestMap; 
+	}
+}
+
 static EGamePlatformType CheckPlatformType(const uint8 Value)
 {
 	EGamePlatformType PlatformTypeVal; 
@@ -84,10 +125,12 @@ static EGamePlatformType CheckPlatformType(const uint8 Value)
 	case static_cast<int>(EGamePlatformType::RopeBridgePlatform):
 		PlatformTypeVal = EGamePlatformType::RopeBridgePlatform;
 		break;
-
+	case static_cast<int>(EGamePlatformType::EndPointPlatform):
+		PlatformTypeVal = EGamePlatformType::EndPointPlatform;
+		break;
 	default:
 		PlatformTypeVal= EGamePlatformType::None;
-			break;
+		break;
 			
 	}
 	return PlatformTypeVal;
@@ -158,23 +201,20 @@ static EGamePlatformMovementType CheckPlatformMovementType(const uint8 Value)
 		break;
 
 		case static_cast<int>(EGamePlatformMovementType::Running):
-
-		PlatformMovementType= EGamePlatformMovementType::Running;
+			PlatformMovementType= EGamePlatformMovementType::Running;
 		break;
 
 		case static_cast<int>(EGamePlatformMovementType::Jogging):
-
-		PlatformMovementType= EGamePlatformMovementType::Jogging;
+			PlatformMovementType= EGamePlatformMovementType::Jogging;
 		break;
 
 		
 		case static_cast<int>(EGamePlatformMovementType::SpawnPoint):
-
-		PlatformMovementType= EGamePlatformMovementType::SpawnPoint;
+			PlatformMovementType= EGamePlatformMovementType::SpawnPoint;
 		break;
-	
+
 		default:
-		PlatformMovementType= EGamePlatformMovementType::None;
+			PlatformMovementType= EGamePlatformMovementType::None;
 		break;
 			
 	}

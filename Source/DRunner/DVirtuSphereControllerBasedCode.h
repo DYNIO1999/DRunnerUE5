@@ -3,25 +3,23 @@
 #include "CoreMinimal.h"
 #include "AVirtuSphereController.h"
 #include "DGameInstance.h"
-#include "IXRTrackingSystem.h"
-
 #include "DVirtuSphereControllerBasedCode.generated.h"
 
 UCLASS()
 class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereController
 {
 	GENERATED_BODY()
-	protected:
+protected:
 	virtual void BeginPlay() override;
     
-    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-    virtual void OnConnected_Implementation() override;
-    virtual void OnDisconnected_Implementation()  override;
-    virtual void OnSpherePose_Implementation(FSpherePoseEvent event) override;
-    virtual void OnControllerState_Implementation(FControllerStateEvent event) override;
-    virtual void OnMotorState_Implementation(FMotorStateEvent event) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void OnConnected_Implementation() override;
+	virtual void OnDisconnected_Implementation()  override;
+	virtual void OnSpherePose_Implementation(FSpherePoseEvent event) override;
+	virtual void OnControllerState_Implementation(FControllerStateEvent event) override;
+	virtual void OnMotorState_Implementation(FMotorStateEvent event) override;
 
-	public:
+public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Wind Direction")
@@ -42,7 +40,7 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Camera XR Last Rotation")
 	FRotator LastKnownXRCameraRotator;
 	
-	private:
+private:
 	FTimerHandle AscendDelay;
 	bool CanAscend{true};
 
@@ -68,5 +66,11 @@ class DRUNNER_API ADVirtuSphereControllerBasedCode : public AVirtuSphereControll
 
 	bool IsRunningDebug{true};
 
+	FQuat LastKnownBaseOrientation;
+	FVector LastKnownBasePosition;
+	bool LostTracking;
+
+	FQuat PreviousFrameTrackingQuat;
+	FQuat LastFrameTrackingQuat;
 	
 };
