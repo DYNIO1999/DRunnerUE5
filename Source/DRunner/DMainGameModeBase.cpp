@@ -146,11 +146,6 @@ void ADMainGameModeBase::StartPlay()
 				
 
 					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
-
-					if (CurrentPlatformType == EGamePlatformType::EndPointPlatform)
-					{
-						UE_LOG(LogTemp, Error, TEXT("TEST"));			
-					}
 					
 					if (GetWorld())
 					{
@@ -232,8 +227,10 @@ void ADMainGameModeBase::StartPlay()
 	
 	TArray<AActor*> FoundCoins;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
+
 	MaxCoinsOnLevel= FoundCoins.Num();
-	
+	MyGameInstance->MaxPointsToGather = MaxCoinsOnLevel;
+
 	for(int i = 0; i < FoundCoins.Num(); i++)
 	{
 		ADCoin* TempCoin = Cast<ADCoin>(FoundCoins[i]);

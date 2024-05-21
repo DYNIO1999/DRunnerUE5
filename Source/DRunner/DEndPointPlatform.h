@@ -35,8 +35,15 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> PortalEntranceMesh;
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USphereComponent> SphereComp;
+
+
+	FTimerHandle OpenNewLevelDelay;
+
 	
 	virtual void Tick(float DeltaTime) override;
 
@@ -49,6 +56,6 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+private:
+	void HandlePortalEntrance();
 };

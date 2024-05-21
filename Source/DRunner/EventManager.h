@@ -21,4 +21,5 @@ public:
 	static FOnPerformSavingPlayerInfo PerformSavingPlayerInfoDelegate;
 	static FOnPerformLoadingPlayerInfo PerformLoadingPlayerInfoDelegate;
 	static FOnDetectedCoinGatheredFromDirection CoinGatheredFromDirectionDelegate;
+
 };
