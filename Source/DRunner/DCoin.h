@@ -46,7 +46,7 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	void SendInfoGathered(const float MultiplayerPerPoint) const;
+	void SendInfoGathered(const float MultiplayerPerPoint, const EGameGatheredFromDirection GatheredFromDirection, const int32 ID) const;
 
 	UPROPERTY()
 	int32 CoinID;

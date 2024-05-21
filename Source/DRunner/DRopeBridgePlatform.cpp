@@ -192,7 +192,11 @@ void ADRopeBridgePlatform::Tick(float DeltaTime)
 		if (PlatformMovementType == EGamePlatformMovementType::Running)
 		{
 			WindSpeed = RunningSpeed;
-		}else
+		}else if(PlatformMovementType == EGamePlatformMovementType::Jogging)
+		{
+			WindSpeed = JoggingSpeed;
+		}
+		else
 		{
 			WindSpeed = WalkSpeed;
 		}
@@ -234,13 +238,11 @@ void ADRopeBridgePlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 		{
 			Plank->SetRelativeRotation(FRotator(0.0f,0.0f, 0.0f));
 		}
-
 		if(WaterAmbientSound->IsPlaying())
 		{
 			WaterAmbientSound->Stop();
 		}
 	}
-	
 }
 
 void ADRopeBridgePlatform::SwapRotation()
@@ -288,8 +290,6 @@ void ADRopeBridgePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 		{
 			WaterAmbientSound->Play();
 		}
-		
-		
 		GetWorldTimerManager().SetTimer(LoggingCooldown, this, &ADRopeBridgePlatform::ProduceLog, LoggingDelayInSeconds, true);
 	}
 }

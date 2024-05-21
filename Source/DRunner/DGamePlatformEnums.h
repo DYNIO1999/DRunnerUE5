@@ -16,7 +16,8 @@ enum class EGamePlatformType : uint8
 	Descending = 100 UMETA(DisplayName = "Descending"),
 	RightPlatform =  150 UMETA(DisplayName = "RightPlatform"),
 	LeftPlatform = 175 UMETA(DisplayName = "LeftPlatform"),
-	RopeBridgePlatform = 200 UMETA(DisplayName = "RopeBridgePlatform")
+	RopeBridgePlatform = 200 UMETA(DisplayName = "RopeBridgePlatform"),
+	EndPointPlatform = 230 UMETA(DisplayName = "EndPointPlatform"),
 };
 
 UENUM(BlueprintType) 
@@ -34,7 +35,8 @@ enum class EGamePlatformMovementType : uint8
 {
 	None = 255 UMETA(DisplayName = "None"),
 	Running = 0 UMETA(DisplayName = "Running"),
-	Walking = 125 UMETA(DisplayName = "Walking"),
+	Jogging = 100 UMETA(DisplayName = "Jogging"),
+	Walking = 200  UMETA(DisplayName = "Walking"),
 	SpawnPoint = 250 UMETA(DisplayName = "SpawnPoint")
 };
 
@@ -44,6 +46,55 @@ enum class EGameUsedLeg : uint8
 	Left = 0  UMETA(DisplayName = "Left"),
 	Right = 1 UMETA(DisplayName = "Right")
 };
+
+UENUM(BlueprintType) 
+enum class EGameGatheredFromDirection : uint8
+{
+	Unspecified = 0  UMETA(DisplayName = "Unspecified"),
+	Middle = 1  UMETA(DisplayName = "Midlle"),
+	Left = 2 UMETA(DisplayName = "Left"),
+	Right = 3 UMETA(DisplayName = "Right")
+};
+
+UENUM(BlueprintType) 
+enum class EGameMaps : uint8
+{
+	TestMap = 0  UMETA(DisplayName = "TestMap"),
+	MainMap = 1  UMETA(DisplayName = "MainMap"),
+};
+
+static FString GetMapName(EGameMaps MapValue)
+{
+	FString MapName = "TestMap";
+
+	switch (MapValue)
+	{
+	case EGameMaps::TestMap:
+		MapName = "TestMap";
+		break;
+	case EGameMaps::MainMap:
+		MapName = "MainMap";
+		break;
+	}
+
+	return MapName;
+}
+
+static EGameMaps GetMapEnumValue(const FString& MapName)
+{
+	if (MapName == "TestMap")
+	{
+		return EGameMaps::TestMap;
+	}
+	else if (MapName == "MainMap")
+	{
+		return EGameMaps::MainMap;
+	}
+	else
+	{
+		return EGameMaps::TestMap; 
+	}
+}
 
 static EGamePlatformType CheckPlatformType(const uint8 Value)
 {
@@ -74,10 +125,12 @@ static EGamePlatformType CheckPlatformType(const uint8 Value)
 	case static_cast<int>(EGamePlatformType::RopeBridgePlatform):
 		PlatformTypeVal = EGamePlatformType::RopeBridgePlatform;
 		break;
-
+	case static_cast<int>(EGamePlatformType::EndPointPlatform):
+		PlatformTypeVal = EGamePlatformType::EndPointPlatform;
+		break;
 	default:
 		PlatformTypeVal= EGamePlatformType::None;
-			break;
+		break;
 			
 	}
 	return PlatformTypeVal;
@@ -148,17 +201,20 @@ static EGamePlatformMovementType CheckPlatformMovementType(const uint8 Value)
 		break;
 
 		case static_cast<int>(EGamePlatformMovementType::Running):
-
-		PlatformMovementType= EGamePlatformMovementType::Running;
+			PlatformMovementType= EGamePlatformMovementType::Running;
 		break;
 
+		case static_cast<int>(EGamePlatformMovementType::Jogging):
+			PlatformMovementType= EGamePlatformMovementType::Jogging;
+		break;
+
+		
 		case static_cast<int>(EGamePlatformMovementType::SpawnPoint):
-
-		PlatformMovementType= EGamePlatformMovementType::SpawnPoint;
+			PlatformMovementType= EGamePlatformMovementType::SpawnPoint;
 		break;
-	
+
 		default:
-		PlatformMovementType= EGamePlatformMovementType::None;
+			PlatformMovementType= EGamePlatformMovementType::None;
 		break;
 			
 	}

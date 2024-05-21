@@ -9,11 +9,20 @@
 #include "DRopeBridgePlatform.h"
 #include "DStandardPlatform.h"
 #include "SavingAndLoadingSystem.h"
+#include "DEndPointPlatform.h"
+#include "EventManager.h"
 #include "IDManager.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
+#include "Engine/LevelStreaming.h"
+
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	
+	UpdatePlayerAfterLoading = false;
 	
 	UGameInstance* GameInstance = GetGameInstance();
  
@@ -28,16 +37,37 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 		
 	}
 
+	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+	
+	MyGameInstance->CurrentMap =  GetMapEnumValue(CurrentLevelName);
+	
 	if(not UTestFunctions::CheckIfFileExists(USavingAndLoadingInfo::DirectoryName,USavingAndLoadingInfo::FileName, USavingAndLoadingInfo::FileExtension))
 	{
-		UE_LOG(LogTemp, Error, TEXT("FILE DOESNT EXIST!"));	
 		UTestFunctions::DeleteFileIfExists(FString("LoggedInfo"),FString("LoggedData"), FString(".csv"));
-
 		const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
 		UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
-
 	}
-
+	else
+	{
+		FString FileName = USavingAndLoadingInfo::GetFileName();
+		FString DirectoryName = USavingAndLoadingInfo::GetDirectoryName();
+		FString FileExtension = USavingAndLoadingInfo::GetFileExtension();
+		if(UTestFunctions::CheckIfFileExists(DirectoryName, FileName, FileExtension))
+		{
+			const FPlayerSavedData PlayerSavedData = USavingAndLoadingSystem::LoadPlayerInfo(DirectoryName, FileName);
+			
+			if(not PlayerSavedData.MapName.IsEmpty())
+			{
+				if  (CurrentLevelName!=*PlayerSavedData.MapName)
+				{
+					MyGameInstance->CurrentMap =  GetMapEnumValue(PlayerSavedData.MapName);
+					UGameplayStatics::OpenLevel(GetWorld(), *PlayerSavedData.MapName);
+				}
+			}
+			UpdatePlayerAfterLoading = true;
+		}
+	}
+	
 	UIDManager::ResetID();
 }	
 
@@ -112,6 +142,8 @@ void ADMainGameModeBase::StartPlay()
 					{
 						PlayerStartYOffset = PlatformPosY;	
 					}
+					
+				
 
 					TSubclassOf<AActor> ActorToSpawn = ChooseActorToSpawn(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
 					
@@ -172,8 +204,14 @@ void ADMainGameModeBase::StartPlay()
 								RopeBridgePlatformPtr->CreateBridge(RopeBridgePlatformPtr->NumberOfPlanks*BridgeSize+1);
 							}
 							else {
-								ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
-								StandardPlatform->InitializePlatform(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
+								if (CurrentPlatformType == EGamePlatformType::EndPointPlatform){
+									ADEndPointPlatform* EndPointPlatform = Cast<ADEndPointPlatform>(SpawnedActor);
+									EndPointPlatform->InitializePlatform(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
+								}else
+								{
+									ADStandardPlatform* StandardPlatform = Cast<ADStandardPlatform>(SpawnedActor);
+									StandardPlatform->InitializePlatform(CurrentPlatformType, CurrentPlatformDirection, CurrentPlatformMovementType);
+								}
 							}
 						}
 					}
@@ -189,8 +227,10 @@ void ADMainGameModeBase::StartPlay()
 	
 	TArray<AActor*> FoundCoins;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
+
 	MaxCoinsOnLevel= FoundCoins.Num();
-	
+	MyGameInstance->MaxPointsToGather = MaxCoinsOnLevel;
+
 	for(int i = 0; i < FoundCoins.Num(); i++)
 	{
 		ADCoin* TempCoin = Cast<ADCoin>(FoundCoins[i]);
@@ -198,6 +238,22 @@ void ADMainGameModeBase::StartPlay()
 	}
 	
 	SetPlayerStartLocation(PlayerStartYOffset);
+
+	UEventManager::PerformSavingPlayerInfoDelegate.AddDynamic(this, &ADMainGameModeBase::HandleSavingPlayerInfo);
+	UEventManager::PerformLoadingPlayerInfoDelegate.AddDynamic(this, &ADMainGameModeBase::HandleLoadingPlayerInfo);
+	
+	if(UpdatePlayerAfterLoading)
+	{
+		FString FileName = USavingAndLoadingInfo::GetFileName();
+		FString DirectoryName = USavingAndLoadingInfo::GetDirectoryName();
+		FString FileExtension = USavingAndLoadingInfo::GetFileExtension();
+		if(UTestFunctions::CheckIfFileExists(DirectoryName, FileName, FileExtension))
+		{
+			const FPlayerSavedData PlayerSavedData = USavingAndLoadingSystem::LoadPlayerInfo(DirectoryName, FileName);
+			UpdatedCollectedAndPosition(PlayerSavedData.PlayerPosition, PlayerSavedData.NumberOfGatheredCoins);
+		}
+	}
+	
 }
 
 
@@ -233,6 +289,17 @@ TSubclassOf<AActor> ADMainGameModeBase::ChooseActorToSpawn(const EGamePlatformTy
 	{
 		return RopeBridgePlatformRef;
 	}
+
+	if (PlatformTypePar == EGamePlatformType::RopeBridgePlatform)
+	{
+		return RopeBridgePlatformRef;
+	}
+
+	if (PlatformTypePar == EGamePlatformType::EndPointPlatform)
+	{
+		return EndPointPlatformRef;
+	}
+	
 	
 	return ForwardStandardPlatform;
 }
@@ -266,6 +333,7 @@ void ADMainGameModeBase::CoinCollected(float MultiplayerPerPoint)
 	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
 
 	MyGameInstance->CurrentGatheredPoints = CurrentGatheredCoins;
+	
 }
 
 
@@ -280,17 +348,50 @@ void ADMainGameModeBase::SetPlayerStartLocation(float PlayerStartOffsetY)
 	
 	if(PlayerController)
 	{
-		UGameInstance* GameInstance = GetGameInstance();
-
-		UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
-
-		const int ImageWidth = MyGameInstance->ImageLevelInfo.ImageWidthSize;
-		const float Offset = MyGameInstance->PlatformConstantOffset;
-
 		APawn* PlayerPawn  = PlayerController->GetPawn();
 
 		FVector ActorLocation = PlayerPawn->GetActorLocation();
 		ActorLocation+=FVector(0,PlayerStartOffsetY, 0.0f);
 		PlayerPawn->SetActorLocation(ActorLocation);
 	}
+}
+
+void ADMainGameModeBase::HandleLoadingPlayerInfo()
+{
+	FString FileName = USavingAndLoadingInfo::GetFileName();
+	FString DirectoryName = USavingAndLoadingInfo::GetDirectoryName();
+	FString FileExtension = USavingAndLoadingInfo::GetFileExtension();
+	if(UTestFunctions::CheckIfFileExists(DirectoryName, FileName, FileExtension))
+	{
+		const FPlayerSavedData PlayerSavedData = USavingAndLoadingSystem::LoadPlayerInfo(DirectoryName, FileName);
+
+		if(not PlayerSavedData.MapName.IsEmpty())
+		{
+			FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+
+			if  (CurrentLevelName!=*PlayerSavedData.MapName)
+			{
+				UGameInstance* GameInstance = GetGameInstance();
+				UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+				
+				MyGameInstance->CurrentMap =  GetMapEnumValue(CurrentLevelName);
+				UGameplayStatics::OpenLevel(GetWorld(), *PlayerSavedData.MapName);
+			}
+		}
+		UpdatedCollectedAndPosition(PlayerSavedData.PlayerPosition, PlayerSavedData.NumberOfGatheredCoins);
+	}
+}
+
+void ADMainGameModeBase::HandleSavingPlayerInfo()
+{
+	FString DirectoryName = USavingAndLoadingInfo::GetDirectoryName();
+	FString FileName = USavingAndLoadingInfo::GetFileName();
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UDGameInstance* MyGameInstance = Cast<UDGameInstance>(GameInstance);
+
+	FString MapName = GetMapName(MyGameInstance->CurrentMap);
+	FPlayerSavedData PlayInfo(MyGameInstance->PlayerCurrentPosition, MyGameInstance->CurrentGatheredPoints, MapName);
+	
+	USavingAndLoadingSystem::SavePlayerInfo(DirectoryName, FileName, PlayInfo);
 }

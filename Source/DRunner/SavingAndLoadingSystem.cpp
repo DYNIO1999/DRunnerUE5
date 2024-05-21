@@ -21,6 +21,9 @@ void USavingAndLoadingSystem::SavePlayerInfo(const FString& DirectoryName, const
 	JsonObject->SetArrayField("PlayerPosition", Values);
 	JsonObject->SetNumberField("NumberOfGatheredCoins", PlayerData.NumberOfGatheredCoins);
 
+	if(!PlayerData.MapName.IsEmpty())
+		JsonObject->SetStringField("CurrentMap", PlayerData.MapName);
+
 	FString OutputString;
 	const TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
 	FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
@@ -55,6 +58,13 @@ FPlayerSavedData USavingAndLoadingSystem::LoadPlayerInfo(const FString& Director
 			const float Y = VectorArray[1]->AsNumber();
 			const float Z = VectorArray[2]->AsNumber();
 			const int NumberOfGatheredCoins = JsonObject->GetIntegerField("NumberOfGatheredCoins");
+
+			if (JsonObject->HasField("CurrentMap"))
+			{
+				const FString CurrentMapName = JsonObject->GetStringField("CurrentMap");
+				return FPlayerSavedData(FVector(X,Y,Z), NumberOfGatheredCoins, CurrentMapName);
+			}
+
 			return FPlayerSavedData(FVector(X,Y,Z), NumberOfGatheredCoins);
 		}
 	}

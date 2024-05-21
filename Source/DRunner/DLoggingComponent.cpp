@@ -29,11 +29,7 @@ void UDLoggingComponent::SaveLoggedData(
 	const double Now = GetWorld()->GetTimeSeconds();
 	
 	UDGameInstance* DGameInstance = Cast<UDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	ADMainGameModeBase* MyGameMode = Cast<ADMainGameModeBase>(GameMode);
-	
-	if(DGameInstance &&  not MyGameMode->RunningInTestMode)
+	if(DGameInstance && DGameInstance->CurrentMap!= EGameMaps::TestMap)
 	{
 		auto& SavedMotorStates = DGameInstance->SavedMotorStatesEvents;
 		if (SavedMotorStates.Num() >= 10)
@@ -58,11 +54,14 @@ void UDLoggingComponent::SaveLoggedData(
 						DGameInstance->PlayerCurrentPosition,
 						DGameInstance->PlayerCurrentRotation,
 						SavedMotorStates[Key][i],
-						static_cast<int>(DGameInstance->CurrentPlayerLeg));
+						static_cast<int>(DGameInstance->CurrentPlayerLeg),
+						static_cast<int>(DGameInstance->GatheredFromDirection),
+						DGameInstance->CurrentCoinId);
 					
 					UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);	
 				}
 			}
+			DGameInstance->ResetCoinDirectionAndID();
 			SavedMotorStates.Reset();
 		}
 	}

@@ -10,8 +10,8 @@
 #include "DGameInstance.h"
 #include "DrawDebugHelpers.h"
 #include "EventManager.h"
-#include "IXRTrackingSystem.h"
-#include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
+
 
 ADPlayer::ADPlayer()
 {
@@ -36,7 +36,7 @@ ADPlayer::ADPlayer()
 
 	PlayerPickedUpAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerPickedUpAudio"));
 	PlayerPickedUpAudio->SetupAttachment(RootComponent);
-
+	
 	PlayerPickedUpAudio->bAutoActivate = false;
 }
 
@@ -61,6 +61,7 @@ void ADPlayer::BeginPlay()
 
 	UEventManager::PlaySoundGatheredDelegate.AddDynamic(this, &ADPlayer::PlayPickedUpCoinSound);
 	UEventManager::LostXRHeadsetTrackingDelegate.AddDynamic(this, &ADPlayer::HandleLostTrackingOnXRHeadset);
+	UEventManager::RegainXRHeadsetTrackingDelegate.AddDynamic(this, &ADPlayer::HandleRegainTrackingOnXRHeadset);
 	
 }
 
@@ -82,6 +83,12 @@ void ADPlayer::Tick(float DeltaTime)
 			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);		
 
 			
+		}else if(DGameInstanceRef->CurrentPlatformMovementType == EGamePlatformMovementType::Jogging)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
+			ChangeLegCooldown = JoggingLegCooldown;
+			DGameInstanceRef->ChangeLegCooldown = ChangeLegCooldown;	
+			GetWorldTimerManager().SetTimer(ChangeLegCooldownTimer, this, &ADPlayer::ChangeLeg, ChangeLegCooldown, true);
 		}else
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ChangeLegCooldownTimer);
@@ -91,6 +98,12 @@ void ADPlayer::Tick(float DeltaTime)
 		}
 		PreviousPlatformMovementType = DGameInstanceRef->CurrentPlatformMovementType;
 	}
+
+	if (LostTracking) {
+		CameraComp->SetRelativeRotation(LastKnownQuat);
+		//UE_LOG(LogTemp, Warning, TEXT("SETTING LOST ROTATION"));
+	}
+	
 
 	// TArray<AActor*> FoundCoins;
 	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADCoin::StaticClass(), FoundCoins);
@@ -119,7 +132,7 @@ void ADPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	Subsystem->ClearAllMappings();
 	Subsystem->AddMappingContext(DefaultInputMapping, 0);
-
+	
 	UEnhancedInputComponent* InputComp = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	InputComp->BindAction(InputMove, ETriggerEvent::Triggered, this, &ADPlayer::Walk);
@@ -127,7 +140,9 @@ void ADPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComp->BindAction(InputRun, ETriggerEvent::Started, this, &ADPlayer::StartRunning);
 	InputComp->BindAction(InputRun, ETriggerEvent::Completed, this, &ADPlayer::StopRunning);
 	InputComp->BindAction(InputJump, ETriggerEvent::Triggered, this, &ADPlayer::StartJump);
-
+	
+	InputComp->BindAction(InputLoadPlayerInfo, ETriggerEvent::Completed, this, &ADPlayer::PressedLoadPlayerInfo);
+	InputComp->BindAction(InputSavePlayerInfo, ETriggerEvent::Completed, this, &ADPlayer::PressedSavePlayerInfo);
 }
 
 void ADPlayer::Walk(const FInputActionValue& InputValue)
@@ -187,6 +202,18 @@ void ADPlayer::StopRunning()
 	ChangeSpeedValue(CurrentCharacterSpeed);
 }
 
+void ADPlayer::PressedLoadPlayerInfo()
+{
+	UE_LOG(LogTemp, Error, TEXT("PRESSED LOAD PLAYER INFO"));
+	UEventManager::PerformLoadingPlayerInfoDelegate.Broadcast();
+}
+
+void ADPlayer::PressedSavePlayerInfo()
+{
+	UE_LOG(LogTemp, Error, TEXT("PRESSED SAVED PLAYER INFO"));
+	UEventManager::PerformSavingPlayerInfoDelegate.Broadcast();
+}
+
 void ADPlayer::SavePlayerData()
 {
 	
@@ -228,16 +255,25 @@ void ADPlayer::PlayPickedUpCoinSound()
 	PlayerPickedUpAudio->Play();
 }
 
-void ADPlayer::HandleLostTrackingOnXRHeadset(FRotator NewRotation)
-{
-	
-	CameraComp->SetRelativeRotation(NewRotation);
-}
 
 void ADPlayer::ChangeSpeedValue(float SpeedValue) const
 {
 	CharacterMovementComp->MaxWalkSpeed = SpeedValue;
 }
+void ADPlayer::HandleLostTrackingOnXRHeadset(FQuat LastQuat)
+{
+	LostTracking = true;
+	LastKnownQuat = LastQuat;
+	//LostTracking = true;
+	//LostTrackedRotation = NewRotation;
+	//UE_LOG(LogTemp, Error, TEXT("LOST TRACKING ROTATOR %f %f %f"), NewRotation.Pitch, NewRotation.Yaw, NewRotation.Roll);
+	CameraComp->bLockToHmd = 0;
 
+}
+
+void ADPlayer::HandleRegainTrackingOnXRHeadset() {
+	LostTracking = false;
+	CameraComp->bLockToHmd = 1;
+}
 
 

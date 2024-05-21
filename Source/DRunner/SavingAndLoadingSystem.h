@@ -30,11 +30,14 @@ struct FPlayerSavedData
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
-	FVector3f PlayerPosition;
+	FVector PlayerPosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
 	float NumberOfGatheredCoins;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString MapName;
+	
 	FPlayerSavedData()
 		: PlayerPosition(-1.0f, -1.0f, -1.0f), NumberOfGatheredCoins(-1.0f)
 	{
@@ -43,6 +46,12 @@ struct FPlayerSavedData
 
 	FPlayerSavedData(const FVector& Position, const float Coins)
 		: PlayerPosition(Position), NumberOfGatheredCoins(Coins)
+	{
+		
+	}
+	
+	FPlayerSavedData(const FVector& Position, const float Coins, const FString& Map)
+		: PlayerPosition(Position), NumberOfGatheredCoins(Coins), MapName(Map)
 	{
 		
 	}
