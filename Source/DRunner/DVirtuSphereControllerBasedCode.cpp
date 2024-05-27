@@ -9,7 +9,7 @@ void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	IsMotorPowerEnabled = false;
 	IsUsingUpAndDowMotor = false;
 	IsOnRopeBridge = false;
-	LostTracking = false;
+	TimeTracked = false;
 
 	Connect();
 }
@@ -104,26 +104,13 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	
 	if(DGameInstance->CurrentPlatformType == EGamePlatformType::RopeBridgePlatform && !IsOnRopeBridge)
 	{
-
-		/*
-		FVector PlayerVelocityNormalized = DGameInstance->CurrentPlatformFowardVector.GetSafeNormal();
-		FRotator Rotation = PlayerVelocityNormalized.Rotation();
-		int AngleToInt = 0;
-		if(Rotation.Yaw!=0.0f)
-		{
-			AngleToInt = Rotation.Yaw / 10.0f;	
-		}*/
-		
-		
 		Angle = DGameInstance->AngleToSwing;
 		
 		SetMotorPower(true);
 		PerformSwing();
 
 		GetWorld()->GetTimerManager().SetTimer(WindSwingTimer, this, &ADVirtuSphereControllerBasedCode::PerformSwing, DGameInstance->ChangeLegCooldown, true);
-
-		//UE_LOG(LogTemp, Error, TEXT("STARTED"));
-
+		
 		IsOnRopeBridge = true;
 		
 	}
@@ -140,17 +127,17 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 			const float VelocityAsScalar = CurrentPoseEvent.velocity;
 			SetSpherePose(VelocityAsScalar, 0.0f);
 		}
-
-		
-		//UE_LOG(LogTemp, Error, TEXT("STOPPED"));
-		
 		
 		Angle = 0.0f;
 		SetMotorPower(false);
 		IsOnRopeBridge = false;
 	}
-
 	
+	GameMapPlayTime  = GetWorld()->GetRealTimeSeconds();
+
+	//Duplicate move this code to DGameInstance
+	DGameInstance->GamePlayTimePerMap  = GetWorld()->GetRealTimeSeconds();
+
 	FQuat TrackingQuat;
 	FVector TrackingVector;
 
@@ -160,12 +147,24 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	{
 		if (XRTracking->GetCurrentPose(0, TrackingQuat, TrackingVector) && (TrackingQuat != FQuat::Identity && TrackingVector != FVector::ZeroVector))
 		{
+			if(!TimeTracked)
+			{
+				TimeHMDTrackingRegain =  GetWorld()->GetRealTimeSeconds();
+				TimeTracked = true;
+			}
+
+			
 			PreviousFrameTrackingQuat = LastFrameTrackingQuat;
 			LastFrameTrackingQuat = TrackingQuat;
 			XRTracking->GetCurrentPose(0, LastFrameTrackingQuat, LastKnownBasePosition);
 			UEventManager::RegainXRHeadsetTrackingDelegate.Broadcast();
 		}else
 		{
+			TimeHMDTrackingLost = GetWorld()->GetTimeSeconds(); 
+			const float ElapsedTime = TimeHMDTrackingLost - TimeHMDTrackingRegain;
+			DGameInstance->TrackingTimeOfHMD+=ElapsedTime;
+			TimeTracked = true;
+			
 			UEventManager::LostXRHeadsetTrackingDelegate.Broadcast(PreviousFrameTrackingQuat);
 		}
 	}

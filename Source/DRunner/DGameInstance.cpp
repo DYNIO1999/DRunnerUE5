@@ -26,6 +26,9 @@ UDGameInstance::UDGameInstance()
 	CurrentCoinId = 0;
 
 	CurrentMap = EGameMaps::TestMap;
+
+	TrackingTimeOfHMD = 0.0f;
+	GamePlayTimePerMap = 0.0f;
 }
 
 void UDGameInstance::Init()

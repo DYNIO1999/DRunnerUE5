@@ -39,7 +39,15 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Camera XR Last Rotation")
 	FRotator LastKnownXRCameraRotator;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Game Map Tracking Time")
+	float GameMapPlayTime;
 	
+	float TimeHMDTrackingLost;
+	float TimeHMDTrackingRegain;
+
+	bool TimeTracked;
+
 private:
 	FTimerHandle AscendDelay;
 	bool CanAscend{true};
@@ -68,9 +76,7 @@ private:
 
 	FQuat LastKnownBaseOrientation;
 	FVector LastKnownBasePosition;
-	bool LostTracking;
 
 	FQuat PreviousFrameTrackingQuat;
 	FQuat LastFrameTrackingQuat;
-	
 };

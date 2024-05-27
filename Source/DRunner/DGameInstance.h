@@ -90,6 +90,10 @@ public:
 	EGameMaps CurrentMap;
 	
 	void ResetCoinDirectionAndID();
+
+	float TrackingTimeOfHMD;
+	float GamePlayTimePerMap;
+	
 private:
 	UFUNCTION()
 	void GetGatheredCoinDirection(EGameGatheredFromDirection GatheredDir, int32 CoinID);

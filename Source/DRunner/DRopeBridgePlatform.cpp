@@ -48,6 +48,22 @@ void ADRopeBridgePlatform::InitializePlatform(const EGamePlatformType PlatformTy
 	PlatformType = PlatformTypePar;
 	PlatformDirection =  PlatformDirectionPar;
 	PlatformMovementType= MovementTypePar;
+
+	if (PlatformMovementType == EGamePlatformMovementType::Running)
+	{
+		WindSpeed = RunningSpeed;
+	}else if(PlatformMovementType == EGamePlatformMovementType::Jogging)
+	{
+		WindSpeed = JoggingSpeed;
+	}
+	else
+	{
+		WindSpeed = WalkSpeed;
+	}
+	
+	//UE_LOG(LogTemp, Error, TEXT("WIND SPEED %f"), WindSpeed);
+	
+	GetWorld()->GetTimerManager().SetTimer(SwapRotationTimer, this, &ADRopeBridgePlatform::SwapRotation, WindSpeed, true);
 }
 
 void ADRopeBridgePlatform::ProduceLog()
@@ -173,9 +189,6 @@ void ADRopeBridgePlatform::BeginPlay()
 		RotationCooldown = GameInstanceRef->ChangeLegCooldown;
 		
 	}
-	
-	GetWorld()->GetTimerManager().SetTimer(SwapRotationTimer, this, &ADRopeBridgePlatform::SwapRotation, RotationCooldown, true);
-	
 }
 
 void ADRopeBridgePlatform::CreateBridge(int NumberOfWoodenPlanks)
@@ -189,6 +202,18 @@ void ADRopeBridgePlatform::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (CanSwing)
 	{
+
+		if (GameInstanceRef->CurrentPlayerLeg == EGameUsedLeg::Left)
+		{
+			WindDirection = FVector(-1.0f, 0.0f, 0.0f);
+		}
+		else
+		{
+			WindDirection = FVector(1.0f, 0.0f, 0.0f);
+		}
+
+		
+		
 		if (PlatformMovementType == EGamePlatformMovementType::Running)
 		{
 			WindSpeed = RunningSpeed;
@@ -263,7 +288,6 @@ void ADRopeBridgePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 		CanProduceLog =  true;
 		UDGameInstance* DGameInstance = Cast<UDGameInstance>(GetGameInstance());
 		
-
 		switch(PlatformDirection){
 		case EGamePlatformDirection::Forward:
 			DGameInstance->AngleToSwing = 0.0f;

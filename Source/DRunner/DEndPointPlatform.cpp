@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
-#include "Components/SphereComponent.h"
 #include "DEndPointPlatform.h"
+#include "Components/SphereComponent.h"
 
 #include "DGameInstance.h"
 #include "DPlayer.h"
@@ -52,7 +52,7 @@ void ADEndPointPlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 	}
 }
 
-void ADEndPointPlatform::HandlePortalEntrance()
+void ADEndPointPlatform::HandlePortalEntrance() const
 {
 	UDGameInstance* DGameInstancePtr = Cast<UDGameInstance>(GetGameInstance());
 	if(DGameInstancePtr->CurrentMap== EGameMaps::TestMap)
@@ -73,6 +73,15 @@ void ADEndPointPlatform::HandlePortalEntrance()
 		UTestFunctions::SaveContentToFile(FString("LoggedData"), GatheredPointsRow);
 		///UEventManager::GameFinalMapEndDelegate.Broadcast();
 
+		float TrackingTime = DGameInstancePtr->TrackingTimeOfHMD;
+		float WholeTime = DGameInstancePtr->GamePlayTimePerMap;
+		float TrackingCoverageInPct = TrackingTime/WholeTime * 100.0f;
+		
+		FString HMDTrackedForInPctRow = FString::Printf(TEXT("HMD tracked for: %f "), TrackingCoverageInPct);
+
+		UTestFunctions::SaveContentToFile(FString("LoggedData"), HMDTrackedForInPctRow);
+
+		UTestFunctions::SaveContentToFile(FString("LoggedData"), GatheredPointsRow);
 		UWorld* World = GetWorld();
 		if (World)
 		{
