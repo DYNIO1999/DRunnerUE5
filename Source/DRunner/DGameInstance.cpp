@@ -29,6 +29,8 @@ UDGameInstance::UDGameInstance()
 
 	TrackingTimeOfHMD = 0.0f;
 	GamePlayTimePerMap = 0.0f;
+
+	HMDRotator = FRotator::ZeroRotator;
 }
 
 void UDGameInstance::Init()

@@ -85,11 +85,14 @@ FString UTestFunctions::PreProcessLogData(
 	const FVector& PlayerPosition,
 	const FRotator& PlayerRotation,
 	const FMotorStateEvent& MotorState,
+	const FRotator& HMDRotation,
 	const int CurrentLeg,
 	const int GatheredFromDirection,
-	const int CoinID)
+	const int CoinID,
+	const float TrackingTime,
+	const float WholeTime)
 {
-	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d\n"),
+	FString RowToSave = FString::Printf(TEXT("%f,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%lld,%d,%d,%d,%d,%f,%f,%f,%f,%f,%f,%d,%d,%d,%f,%f\n"),
 		CurrentTime,
 		PlatformType,
 		PlatformDirection,
@@ -112,16 +115,21 @@ FString UTestFunctions::PreProcessLogData(
 		MotorState.motorVelocity,
 		MotorState.motorVoltage,
 		MotorState.motorCurrent,
+		HMDRotation.Roll,
+		HMDRotation.Pitch,
+		HMDRotation.Yaw,
 		CurrentLeg,
 		GatheredFromDirection,
-		CoinID);
+		CoinID,
+		TrackingTime,
+		WholeTime);
 
 	return RowToSave;
 }
 
 FString UTestFunctions::CreateColumnNames()
 {
-	FString RowToSave = FString::Printf(TEXT("CurrentTime,PlatformType,PlatformDirection,PlatformMovementType,PlayerVelocity.x,PlayerVelocity.y,PlayerVelocity.z,PlayerPosition.x,PlayerPosition.y,PlayerPosition.z,PlayerRotation.Pitch,PlayerRotation.Roll,PlayerRotation.Yaw,PlayerCurrentSpeed,UnixTimeStamp [us],ControllerId,MotorFlags,HallPosition,EncoderPosition,MotorVelocity,MotorVoltage,MotorCurrent,CurrentLeg,PointGatheredFromDirection,GatheredPointID\n"));
+	FString RowToSave = FString::Printf(TEXT("CurrentTime,PlatformType,PlatformDirection,PlatformMovementType,PlayerVelocity.x,PlayerVelocity.y,PlayerVelocity.z,PlayerPosition.x,PlayerPosition.y,PlayerPosition.z,PlayerRotation.Pitch,PlayerRotation.Roll,PlayerRotation.Yaw,PlayerCurrentSpeed,UnixTimeStamp [us],ControllerId,MotorFlags,HallPosition,EncoderPosition,MotorVelocity,MotorVoltage,MotorCurrent,HMDRotation.Pitch,HMDRotation.Roll,HMDRotation.Yaw,CurrentLeg,PointGatheredFromDirection,GatheredPointID,TrackingTime,WholeTime\n"));
 	return RowToSave;
 }
 

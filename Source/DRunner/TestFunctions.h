@@ -54,20 +54,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
 	static void SaveContentToFile(const FString& FileName, const FString& FileContent);
 
-	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
-	static FString PreProcessLogData(
-	const float CurrentTime,
-	const int PlatformType,
-	const int PlatformDirection,
-	const int PlatformMovementType,
-	const float PlayerSpeed,
-	const FVector& PlayerVelocity,
-	const FVector& PlayerPosition,
-	const FRotator& PlayerRotation,
-	const FMotorStateEvent& MotorStates,
-	const int CurrentLeg,
-	const int GatheredFromDirection,
-	const int CoinID);
+	UFUNCTION(BlueprintCallable, Category = "Saving Data to File")
+		static FString PreProcessLogData(
+			const float CurrentTime,
+			const int PlatformType,
+			const int PlatformDirection,
+			const int PlatformMovementType,
+			const float PlayerSpeed,
+			const FVector& PlayerVelocity,
+			const FVector& PlayerPosition,
+			const FRotator& PlayerRotation,
+			const FMotorStateEvent& MotorState,
+			const FRotator& HMDRotation,
+			const int CurrentLeg,
+			const int GatheredFromDirection,
+			const int CoinID,
+			const float TrackingTime,
+			const float WholeTime);
 
 	UFUNCTION(BlueprintCallable, Category="Saving Data to File")
 	static FString CreateColumnNames();

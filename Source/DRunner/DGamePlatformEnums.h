@@ -1,10 +1,5 @@
 #pragma once
 
-
-// left (minus values) right minus values and distance
-// add only those when hit rectangle hit
-// think about 
-
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType) 

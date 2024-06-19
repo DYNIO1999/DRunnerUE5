@@ -231,8 +231,6 @@ void ADRopeBridgePlatform::Tick(float DeltaTime)
 			float CurrentSpeed = GameInstanceRef->PlayerCurrentSpeed;
 			FRotator NewRotation = FMath::RInterpTo(Plank->GetRelativeRotation(), TargetRotation, DeltaTime, WindSpeed*CurrentSpeed);
 			Plank->SetRelativeRotation(NewRotation);
-			// const FVector CurrentVelocity = WindDirection* WindSpeed *DeltaTime + 10.0;
-			// Plank->SetRelativeRotation(Plank->GetRelativeRotation()+FRotator(CurrentVelocity.Y, CurrentVelocity.Z, CurrentVelocity.X));
 		}
 	}
 }

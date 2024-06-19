@@ -54,10 +54,12 @@ void UDLoggingComponent::SaveLoggedData(
 						DGameInstance->PlayerCurrentPosition,
 						DGameInstance->PlayerCurrentRotation,
 						SavedMotorStates[Key][i],
+						DGameInstance->HMDRotator,
 						static_cast<int>(DGameInstance->CurrentPlayerLeg),
 						static_cast<int>(DGameInstance->GatheredFromDirection),
-						DGameInstance->CurrentCoinId);
-					
+						DGameInstance->CurrentCoinId,
+						DGameInstance->TrackingTimeOfHMD,
+						DGameInstance->GamePlayTimePerMap);
 					UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);	
 				}
 			}

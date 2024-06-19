@@ -37,14 +37,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category="Speed Ascending And Descending")
 	float SpeedAscendingAndDescending{0.1};
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Camera XR Last Rotation")
-	FRotator LastKnownXRCameraRotator;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Camera XR Previous Tracking Quat")
+	FQuat PreviousFrameTrackingQuat;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite , Category="Game Map Tracking Time")
 	float GameMapPlayTime;
 	
 	float TimeHMDTrackingLost;
 	float TimeHMDTrackingRegain;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracking Time")
+	float TrackingTimeHMD;
 
 	bool TimeTracked;
 
@@ -67,16 +70,17 @@ private:
 
 	bool IsUsingUpAndDowMotor;
 
+	bool StartedWithoutHMDTracking;
+
 	FTimerHandle WindSwingTimer;
 
 	bool IsOnRopeBridge;
 
 
-	bool IsRunningDebug{true};
+	bool IsRunningDebug{false};
 
 	FQuat LastKnownBaseOrientation;
 	FVector LastKnownBasePosition;
 
-	FQuat PreviousFrameTrackingQuat;
 	FQuat LastFrameTrackingQuat;
 };

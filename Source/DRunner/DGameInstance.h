@@ -85,6 +85,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int32 CurrentCoinId;
 
+	UPROPERTY(BlueprintReadWrite)
+	FRotator HMDRotator;
 
 	UPROPERTY(BlueprintReadWrite)
 	EGameMaps CurrentMap;

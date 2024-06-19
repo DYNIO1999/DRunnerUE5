@@ -10,11 +10,20 @@ void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	IsUsingUpAndDowMotor = false;
 	IsOnRopeBridge = false;
 	TimeTracked = false;
-
+	StartedWithoutHMDTracking = false;
+	TimeHMDTrackingLost={0.0f};
+	TimeHMDTrackingRegain={0.0f};
 	Connect();
+	IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
+	FQuat TempQuat = FQuat::Identity;
+	FVector TempVector = FVector::Zero();
+
 }
     
 void ADVirtuSphereControllerBasedCode::EndPlay(const EEndPlayReason::Type EndPlayReason){
+
+	//
+
 	Super::EndPlay(EndPlayReason);
 	SetMotorPower(false);
 	Disconnect();
@@ -134,9 +143,7 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	}
 	
 	GameMapPlayTime  = GetWorld()->GetRealTimeSeconds();
-
-	//Duplicate move this code to DGameInstance
-	DGameInstance->GamePlayTimePerMap  = GetWorld()->GetRealTimeSeconds();
+	DGameInstance->GamePlayTimePerMap = GameMapPlayTime;
 
 	FQuat TrackingQuat;
 	FVector TrackingVector;
@@ -147,24 +154,42 @@ void ADVirtuSphereControllerBasedCode::Tick(float DeltaTime){
 	{
 		if (XRTracking->GetCurrentPose(0, TrackingQuat, TrackingVector) && (TrackingQuat != FQuat::Identity && TrackingVector != FVector::ZeroVector))
 		{
+			
 			if(!TimeTracked)
 			{
+				/*
 				TimeHMDTrackingRegain =  GetWorld()->GetRealTimeSeconds();
+				*/
 				TimeTracked = true;
+				UE_LOG(LogTemp, Error, TEXT("Tracking Regained"));
 			}
-
 			
+
 			PreviousFrameTrackingQuat = LastFrameTrackingQuat;
-			LastFrameTrackingQuat = TrackingQuat;
-			XRTracking->GetCurrentPose(0, LastFrameTrackingQuat, LastKnownBasePosition);
+			LastFrameTrackingQuat = TrackingQuat; 
+			LastKnownBasePosition = TrackingVector;
+			
+
+			DGameInstance->TrackingTimeOfHMD += GetWorld()->DeltaRealTimeSeconds;
+			TrackingTimeHMD = DGameInstance->TrackingTimeOfHMD;
 			UEventManager::RegainXRHeadsetTrackingDelegate.Broadcast();
+			DGameInstance->HMDRotator = PreviousFrameTrackingQuat.Rotator();
+
 		}else
 		{
-			TimeHMDTrackingLost = GetWorld()->GetTimeSeconds(); 
-			const float ElapsedTime = TimeHMDTrackingLost - TimeHMDTrackingRegain;
-			DGameInstance->TrackingTimeOfHMD+=ElapsedTime;
-			TimeTracked = true;
-			
+			if (TimeTracked)
+			{
+
+				/*
+				TimeHMDTrackingLost = GetWorld()->GetRealTimeSeconds();
+				const float ElapsedTime = TimeHMDTrackingLost - TimeHMDTrackingRegain;
+				
+				DGameInstance->TrackingTimeOfHMD += ElapsedTime;
+				TrackingTimeHMD = DGameInstance->TrackingTimeOfHMD;
+				*/
+				TimeTracked = false;
+				UE_LOG(LogTemp, Error, TEXT("Tracking Lost"));
+			}
 			UEventManager::LostXRHeadsetTrackingDelegate.Broadcast(PreviousFrameTrackingQuat);
 		}
 	}
@@ -182,7 +207,6 @@ void ADVirtuSphereControllerBasedCode::PerformDescending()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
-	// 6 m/s
 	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
 	SetSpherePose(Result, Direction);	
 }
