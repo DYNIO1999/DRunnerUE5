@@ -14,16 +14,10 @@ void ADVirtuSphereControllerBasedCode::BeginPlay(){
 	TimeHMDTrackingLost={0.0f};
 	TimeHMDTrackingRegain={0.0f};
 	Connect();
-	IXRTrackingSystem* XRTracking = GEngine->XRSystem.Get();
-	FQuat TempQuat = FQuat::Identity;
-	FVector TempVector = FVector::Zero();
-
 }
     
 void ADVirtuSphereControllerBasedCode::EndPlay(const EEndPlayReason::Type EndPlayReason){
-
-	//
-
+	
 	Super::EndPlay(EndPlayReason);
 	SetMotorPower(false);
 	Disconnect();
@@ -199,7 +193,7 @@ void ADVirtuSphereControllerBasedCode::PerformAscending()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
-	float Result = FMath::Max(VelocityAsScalar - 0.1f, 1.0);
+	float Result = FMath::Max(VelocityAsScalar - 0.1f, 0.5f);
 	SetSpherePose(Result, Direction);	
 }
 
@@ -207,7 +201,7 @@ void ADVirtuSphereControllerBasedCode::PerformDescending()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
-	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
+	float Result = FMath::Min(VelocityAsScalar + 0.5f, 4.0f);
 	SetSpherePose(Result, Direction);	
 }
 
@@ -215,6 +209,6 @@ void ADVirtuSphereControllerBasedCode::PerformSwing()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	
-	float Result = FMath::Min(VelocityAsScalar + 0.5f, 6.0);
+	float Result = FMath::Min(VelocityAsScalar + 0.5f, 3.0f);
 	SetSpherePose(Result, Angle+30.0f*WindDirection.X);
 }

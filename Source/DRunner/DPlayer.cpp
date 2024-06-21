@@ -237,12 +237,12 @@ void ADPlayer::ChangeLeg()
 		{
 			if (PlayerCurrentLeg == EGameUsedLeg::Left){
 
-				PlayerRightLegAudio->Play();
+				//PlayerRightLegAudio->Play();
 				PlayerCurrentLeg = EGameUsedLeg::Right;
 			}
 			else
 			{
-				PlayerLeftLegAudio->Play();
+				//PlayerLeftLegAudio->Play();
 				PlayerCurrentLeg =EGameUsedLeg::Left;
 			}
 			DGameInstanceRef->CurrentPlayerLeg = PlayerCurrentLeg;

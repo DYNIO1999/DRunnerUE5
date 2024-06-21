@@ -253,6 +253,10 @@ void ADMainGameModeBase::StartPlay()
 			UpdatedCollectedAndPosition(PlayerSavedData.PlayerPosition, PlayerSavedData.NumberOfGatheredCoins);
 		}
 	}
+
+	
+	MyGameInstance->TrackingTimeOfHMD = {0.0};
+	MyGameInstance->GamePlayTimePerMap = {0.0};
 	
 }
 

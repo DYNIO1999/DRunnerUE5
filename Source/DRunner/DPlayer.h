@@ -84,10 +84,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputAction* InputSavePlayerInfo;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UCameraComponent> CameraComp;
 		
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 
 	UPROPERTY(EditAnywhere, Category = "Audio")

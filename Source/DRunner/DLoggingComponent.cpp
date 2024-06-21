@@ -55,7 +55,6 @@ void UDLoggingComponent::SaveLoggedData(
 						DGameInstance->PlayerCurrentRotation,
 						SavedMotorStates[Key][i],
 						DGameInstance->HMDRotator,
-						static_cast<int>(DGameInstance->CurrentPlayerLeg),
 						static_cast<int>(DGameInstance->GatheredFromDirection),
 						DGameInstance->CurrentCoinId,
 						DGameInstance->TrackingTimeOfHMD,

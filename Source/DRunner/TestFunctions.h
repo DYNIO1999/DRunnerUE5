@@ -66,7 +66,6 @@ public:
 			const FRotator& PlayerRotation,
 			const FMotorStateEvent& MotorState,
 			const FRotator& HMDRotation,
-			const int CurrentLeg,
 			const int GatheredFromDirection,
 			const int CoinID,
 			const float TrackingTime,
