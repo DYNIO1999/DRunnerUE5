@@ -29,9 +29,9 @@ UENUM(BlueprintType)
 enum class EGamePlatformMovementType : uint8
 {
 	None = 255 UMETA(DisplayName = "None"),
-	Running = 0 UMETA(DisplayName = "Running"),
-	Jogging = 100 UMETA(DisplayName = "Jogging"),
-	Walking = 200  UMETA(DisplayName = "Walking"),
+	Running = 0 UMETA(DisplayName = "Run"),
+	Jogging = 100 UMETA(DisplayName = "Jog"),
+	Walking = 200  UMETA(DisplayName = "Walk"),
 	SpawnPoint = 250 UMETA(DisplayName = "SpawnPoint")
 };
 

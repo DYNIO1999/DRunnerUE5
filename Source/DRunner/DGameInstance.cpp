@@ -21,6 +21,7 @@ UDGameInstance::UDGameInstance()
 	
 	CurrentPlatformType = EGamePlatformType::None;
 
+	CurrentPlatformMovementType = EGamePlatformMovementType::SpawnPoint;
 	
 	GatheredFromDirection = EGameGatheredFromDirection::Unspecified;
 	CurrentCoinId = 0;
