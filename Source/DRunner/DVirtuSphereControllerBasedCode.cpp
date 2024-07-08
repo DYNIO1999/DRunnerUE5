@@ -193,7 +193,7 @@ void ADVirtuSphereControllerBasedCode::PerformAscending()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	const float Direction = CurrentPoseEvent.direction;
-	float Result = FMath::Max(VelocityAsScalar - 0.1f, 0.5f);
+	float Result = FMath::Max(VelocityAsScalar + 0.2f, 1.0f);
 	SetSpherePose(Result, Direction);	
 }
 
@@ -209,6 +209,6 @@ void ADVirtuSphereControllerBasedCode::PerformSwing()
 {
 	const float VelocityAsScalar = CurrentPoseEvent.velocity;
 	
-	float Result = FMath::Min(VelocityAsScalar + 0.5f, 3.0f);
+	float Result = FMath::Min(VelocityAsScalar + 0.6f, 6.0f);
 	SetSpherePose(Result, Angle+30.0f*WindDirection.X);
 }
