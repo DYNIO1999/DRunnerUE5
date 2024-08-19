@@ -59,7 +59,7 @@ void UDLoggingComponent::SaveLoggedData(
 						DGameInstance->CurrentCoinId,
 						DGameInstance->TrackingTimeOfHMD,
 						DGameInstance->GamePlayTimePerMap);
-					UTestFunctions::SaveContentToFile(FString("LoggedData"), ContentToBeSaved);	
+					UTestFunctions::SaveContentToFile(DGameInstance->CurrentNameLoggedDataFile, ContentToBeSaved);	
 				}
 			}
 			DGameInstance->ResetCoinDirectionAndID();

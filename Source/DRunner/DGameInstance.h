@@ -90,12 +90,16 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	EGameMaps CurrentMap;
+
+	UPROPERTY(BlueprintReadOnly)
+	FString CurrentNameLoggedDataFile;
 	
 	void ResetCoinDirectionAndID();
 
 	float TrackingTimeOfHMD;
 	float GamePlayTimePerMap;
-	
+
+	void CreateNewNameForLoggedDataFile();
 private:
 	UFUNCTION()
 	void GetGatheredCoinDirection(EGameGatheredFromDirection GatheredDir, int32 CoinID);

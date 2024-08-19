@@ -49,6 +49,14 @@ void UDGameInstance::ResetCoinDirectionAndID()
 
 }
 
+void UDGameInstance::CreateNewNameForLoggedDataFile()
+{
+	const FDateTime Now = FDateTime::Now();
+	FString DateTimeString = Now.ToString(TEXT("%d-%m-%Y-_%H-%M-%S"));	
+	UE_LOG(LogTemp, Log, TEXT("Current Date and Time: %s"), *DateTimeString);
+	CurrentNameLoggedDataFile = DateTimeString;
+}
+
 void UDGameInstance::GetGatheredCoinDirection(EGameGatheredFromDirection GatheredDir, int32 CoinID)
 {
 	GatheredFromDirection = GatheredDir;

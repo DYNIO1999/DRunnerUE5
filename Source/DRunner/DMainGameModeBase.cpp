@@ -15,6 +15,7 @@
 #include "Engine/World.h"
 #include "Engine/Engine.h"
 #include "Engine/LevelStreaming.h"
+#include "Runtime/AssetRegistry/Private/AssetRegistryImpl.h"
 
 
 void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -43,9 +44,13 @@ void ADMainGameModeBase::InitGame(const FString& MapName, const FString& Options
 	
 	if(not UTestFunctions::CheckIfFileExists(USavingAndLoadingInfo::DirectoryName,USavingAndLoadingInfo::FileName, USavingAndLoadingInfo::FileExtension))
 	{
-		UTestFunctions::DeleteFileIfExists(FString("LoggedInfo"),FString("LoggedData"), FString(".csv"));
+		//UTestFunctions::DeleteFileIfExists(MyGameInstance->CurrentNameLoggedDataFile,FString("LoggedData"), FString(".csv"));
+
+		MyGameInstance->CreateNewNameForLoggedDataFile();
+		
 		const FString ColumnNamesAsString = UTestFunctions::CreateColumnNames();
-		UTestFunctions::SaveContentToFile(FString("LoggedData"), ColumnNamesAsString);
+		
+		UTestFunctions::SaveContentToFile(MyGameInstance->CurrentNameLoggedDataFile, ColumnNamesAsString);
 	}
 	else
 	{

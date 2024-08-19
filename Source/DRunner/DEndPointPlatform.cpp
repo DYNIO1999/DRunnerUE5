@@ -70,7 +70,7 @@ void ADEndPointPlatform::HandlePortalEntrance() const
 			DGameInstancePtr->MaxPointsToGather);
 		//Add calculation of % of tracked system	
 
-		UTestFunctions::SaveContentToFile(FString("LoggedData"), GatheredPointsRow);
+		UTestFunctions::SaveContentToFile(DGameInstancePtr->CurrentNameLoggedDataFile, GatheredPointsRow);
 		///UEventManager::GameFinalMapEndDelegate.Broadcast();
 
 		float TrackingTime = DGameInstancePtr->TrackingTimeOfHMD;
@@ -79,9 +79,9 @@ void ADEndPointPlatform::HandlePortalEntrance() const
 		
 		FString HMDTrackedForInPctRow = FString::Printf(TEXT("HMD tracked for: %f "), TrackingCoverageInPct);
 
-		UTestFunctions::SaveContentToFile(FString("LoggedData"), HMDTrackedForInPctRow);
+		UTestFunctions::SaveContentToFile(DGameInstancePtr->CurrentNameLoggedDataFile, HMDTrackedForInPctRow);
 
-		UTestFunctions::SaveContentToFile(FString("LoggedData"), GatheredPointsRow);
+		UTestFunctions::SaveContentToFile(DGameInstancePtr->CurrentNameLoggedDataFile, GatheredPointsRow);
 		UWorld* World = GetWorld();
 		if (World)
 		{
